@@ -27,7 +27,5 @@ public class HelloServlet extends HttpServlet {
 
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/continue.jsp");
         dispatcher.forward(req, resp);
-
-
     }
 }
