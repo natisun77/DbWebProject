@@ -1,12 +1,27 @@
 package com.nataliia.model;
 
 public class User {
-   private String name;
-   private String password;
+    private Long id;
+    private String name;
+    private String password;
+
+    public User(Long id, String name, String password) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+    }
 
     public User(String name, String password) {
         this.name = name;
         this.password = password;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -32,13 +47,15 @@ public class User {
 
         User user = (User) o;
 
+        if (!id.equals(user.id)) return false;
         if (!name.equals(user.name)) return false;
         return password.equals(user.password);
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
         result = 31 * result + password.hashCode();
         return result;
     }
@@ -46,7 +63,8 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }
