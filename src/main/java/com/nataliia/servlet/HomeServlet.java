@@ -14,11 +14,12 @@ import java.util.List;
 
 @WebServlet(value = "/")
 public class HomeServlet extends HttpServlet {
-    private static final UserDao userDao = new UserDao();
+    static UserDao userDao = new UserDao();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<User> users = userDao.getUsers();
+
         req.setAttribute("users", users);
 
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/allUsers.jsp");
