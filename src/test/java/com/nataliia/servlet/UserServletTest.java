@@ -14,85 +14,84 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
 
 public class UserServletTest {
     private UserServlet userServlet;
-    private UserDao userDaoMock = mock(UserDao.class);
+    private UserDao userDaoMock = Mockito.mock(UserDao.class);
 
     @Before
     public void init() {
         userServlet = new UserServlet();
-        userServlet.userDao = userDaoMock;
+        userServlet.setUserDao(userDaoMock);
     }
 
     @Test
     public void testDoGet() throws ServletException, IOException {
         userServlet = Mockito.spy(userServlet);
-        HttpServletRequest requestMock = mock(HttpServletRequest.class);
-        HttpServletResponse responseMock = mock(HttpServletResponse.class);
+        HttpServletRequest requestMock = Mockito.mock(HttpServletRequest.class);
+        HttpServletResponse responseMock = Mockito.mock(HttpServletResponse.class);
 
-        when(requestMock.getParameter("id")).thenReturn("1");
-        when(requestMock.getParameter("name")).thenReturn("nata");
-        when(requestMock.getParameter("password")).thenReturn("1111");
-        when(userDaoMock.getUser((long) 1)).thenReturn(Optional.of(new User((long) 1, "nata", "1111")));
+        Mockito.when(requestMock.getParameter("id")).thenReturn("1");
+        Mockito.when(requestMock.getParameter("name")).thenReturn("nata");
+        Mockito.when(requestMock.getParameter("password")).thenReturn("1111");
+        Mockito.when(userDaoMock.getUser((long) 1)).thenReturn(Optional.of(new User((long) 1, "nata", "1111")));
 
-        ServletContext servletContextMock = mock(ServletContext.class);
-        doReturn(servletContextMock).when(userServlet).getServletContext();
+        ServletContext servletContextMock = Mockito.mock(ServletContext.class);
+        Mockito.doReturn(servletContextMock).when(userServlet).getServletContext();
 
-        RequestDispatcher requestDispatcherMock = mock(RequestDispatcher.class);
-        when(servletContextMock.getRequestDispatcher("/editUser.jsp")).thenReturn(requestDispatcherMock);
+        RequestDispatcher requestDispatcherMock = Mockito.mock(RequestDispatcher.class);
+        Mockito.when(servletContextMock.getRequestDispatcher("/editUser.jsp")).thenReturn(requestDispatcherMock);
 
         userServlet.doGet(requestMock, responseMock);
 
-        verify(requestDispatcherMock, times(1)).forward(requestMock, responseMock);
+        Mockito.verify(requestDispatcherMock, Mockito.times(1)).forward(requestMock, responseMock);
 
     }
 
     @Test
     public void testDoPostWithoutAction() throws IOException, ServletException {
-        HttpServletRequest requestMock = mock(HttpServletRequest.class);
-        HttpServletResponse responseMock = mock(HttpServletResponse.class);
+        HttpServletRequest requestMock = Mockito.mock(HttpServletRequest.class);
+        HttpServletResponse responseMock = Mockito.mock(HttpServletResponse.class);
 
-        when(requestMock.getParameter("action")).thenReturn(null);
-        when(requestMock.getParameter("name")).thenReturn("nata");
-        when(requestMock.getParameter("password")).thenReturn("1111");
+        Mockito.when(requestMock.getParameter("action")).thenReturn(null);
+        Mockito.when(requestMock.getParameter("name")).thenReturn("nata");
+        Mockito.when(requestMock.getParameter("password")).thenReturn("1111");
 
         userServlet.doPost(requestMock, responseMock);
 
-        verify(userDaoMock, times(1)).addUser(new User("nata", "1111"));
+        Mockito.verify(userDaoMock, Mockito.times(1)).addUser(new User("nata", "1111"));
 
-        verify(responseMock, times(1)).sendRedirect("/");
+        Mockito.verify(responseMock, Mockito.times(1)).sendRedirect("/");
     }
 
     @Test
     public void testDoPostWithActionPut() throws IOException, ServletException {
-        HttpServletRequest requestMock = mock(HttpServletRequest.class);
-        HttpServletResponse responseMock = mock(HttpServletResponse.class);
+        HttpServletRequest requestMock = Mockito.mock(HttpServletRequest.class);
+        HttpServletResponse responseMock = Mockito.mock(HttpServletResponse.class);
 
-        when(requestMock.getParameter("action")).thenReturn("put");
-        when(requestMock.getParameter("name")).thenReturn("nata");
-        when(requestMock.getParameter("password")).thenReturn("1111");
-        when(requestMock.getParameter("id")).thenReturn("1");
-        when(userDaoMock.updateUser(new User((long) 1, "nata", "1111"))).thenReturn(true);
+        Mockito.when(requestMock.getParameter("action")).thenReturn("put");
+        Mockito.when(requestMock.getParameter("name")).thenReturn("nata");
+        Mockito.when(requestMock.getParameter("password")).thenReturn("1111");
+        Mockito.when(requestMock.getParameter("id")).thenReturn("1");
+        Mockito.when(userDaoMock.updateUser(new User((long) 1, "nata", "1111"))).thenReturn(true);
 
         userServlet.doPost(requestMock, responseMock);
 
-        verify(responseMock, times(1)).sendRedirect("/?updated=true");
+        Mockito.verify(responseMock, Mockito.times(1)).sendRedirect("/?updated=true");
     }
 
     @Test
     public void testDoPostWithActionDelete() throws IOException, ServletException {
-        HttpServletRequest requestMock = mock(HttpServletRequest.class);
-        HttpServletResponse responseMock = mock(HttpServletResponse.class);
+        HttpServletRequest requestMock = Mockito.mock(HttpServletRequest.class);
+        HttpServletResponse responseMock = Mockito.mock(HttpServletResponse.class);
 
-        when(requestMock.getParameter("action")).thenReturn("delete");
-        when(requestMock.getParameter("id")).thenReturn("1");
-        when(userDaoMock.deleteUser(1)).thenReturn(true);
+        Mockito.when(requestMock.getParameter("action")).thenReturn("delete");
+        Mockito.when(requestMock.getParameter("id")).thenReturn("1");
+        Mockito.when(userDaoMock.deleteUser(1)).thenReturn(true);
 
         userServlet.doPost(requestMock, responseMock);
 
-        verify(userDaoMock, times(1)).deleteUser(1);
-        verify(responseMock, times(1)).sendRedirect("/?deleted=true");
+        Mockito.verify(userDaoMock, Mockito.times(1)).deleteUser(1);
+        Mockito.verify(responseMock, Mockito.times(1)).sendRedirect("/?deleted=true");
     }
 }
