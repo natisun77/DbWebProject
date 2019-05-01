@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class UserDao {
 
-    public void addUser(User user) {
+    public boolean addUser(User user) {
         Connection connection = DbConnector.connect().get();
         try {
             String sql = "INSERT INTO users(name, password) VALUES (?, ?)";
@@ -22,9 +22,11 @@ public class UserDao {
             preparedStatement.setString(2, user.getPassword());
 
             preparedStatement.executeUpdate();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public Optional<User> getUser(Long id) {
@@ -39,6 +41,31 @@ public class UserDao {
                 String name = resultSet.getString(2);
                 String password = resultSet.getString(3);
                 User user = new User(userID, name, password);
+                System.out.println(user);
+                return Optional.of(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    public Optional<User> getUser(String name, String password) {
+        Connection connection = DbConnector.connect().get();
+        try {
+            String sql = "SELECT users.id, role\n" +
+                    "FROM users\n" +
+                    " JOIN roles\n" +
+                    "    ON users.role_id = roles.id\n" +
+                    "where users.name = ? and users.password = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Long userID = resultSet.getLong(1);
+                String role = resultSet.getString(2);
+                User user = new User(userID, name, password, role);
                 System.out.println(user);
                 return Optional.of(user);
             }

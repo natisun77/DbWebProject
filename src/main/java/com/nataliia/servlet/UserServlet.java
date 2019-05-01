@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(value = "/user")
@@ -28,9 +29,24 @@ public class UserServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             throw new UserNotFoundException();
         }
-        User user = userDao.getUser(id).orElseThrow(UserNotFoundException::new);
-        req.setAttribute("user", user);
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/editUser.jsp");
+
+        HttpSession session = req.getSession();
+        String role = (String) session.getAttribute("role");
+
+        if ("admin".equals(role)) {
+            User user = userDao.getUser(id).orElseThrow(UserNotFoundException::new);
+            req.setAttribute("user", user);
+        }
+
+        String urlToRedirect;
+        if ("admin".equals(role)) {
+            urlToRedirect = "/editUser.jsp";
+        } else {
+            req.setAttribute("message", "Ошибка. Войдите в систему снова.");
+            urlToRedirect = "/index.jsp";
+        }
+
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlToRedirect);
         dispatcher.forward(req, resp);
     }
 
@@ -46,25 +62,30 @@ public class UserServlet extends HttpServlet {
         } else if ("put".equals(action)) {
             doPut(req, resp);
         } else {
-            String name = req.getParameter("name");
-            String password = req.getParameter("password");
-            userDao.addUser(new User(name, password));
-
-            resp.sendRedirect("/");
+            resp.sendRedirect("/index.jsp");
         }
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id;
-        try {
-            id = Long.parseLong(req.getParameter("id"));
-        } catch (NumberFormatException e) {
-            throw new UserNotFoundException();
-        }
-        boolean isDeleted = userDao.deleteUser(id);
+        HttpSession session = req.getSession();
+        String role = (String) session.getAttribute("role");
 
-        resp.sendRedirect("/?deleted=" + isDeleted);
+        if ("admin".equals(role)) {
+            Long id;
+            try {
+                id = Long.parseLong(req.getParameter("id"));
+            } catch (NumberFormatException e) {
+                throw new UserNotFoundException();
+            }
+            userDao.deleteUser(id);
+
+            resp.sendRedirect("/adminPage");
+        } else {
+            req.setAttribute("message", "Ошибка. Войдите в систему снова.");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+            dispatcher.forward(req, resp);
+        }
     }
 
     @Override
@@ -76,15 +97,24 @@ public class UserServlet extends HttpServlet {
         String name = req.getParameter("name");
         String password = req.getParameter("password");
 
-        Long id;
-        try {
-            id = Long.parseLong(req.getParameter("id"));
-        } catch (NumberFormatException e) {
-            throw new UserNotFoundException();
+        HttpSession session = req.getSession();
+        String role = (String) session.getAttribute("role");
+
+        if ("admin".equals(role)) {
+            Long id;
+            try {
+                id = Long.parseLong(req.getParameter("id"));
+            } catch (NumberFormatException e) {
+                throw new UserNotFoundException();
+            }
+
+            userDao.updateUser(new User(id, name, password));
+
+            resp.sendRedirect("/adminPage");
+        } else {
+            req.setAttribute("message", "Ошибка. Войдите в систему снова.");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+            dispatcher.forward(req, resp);
         }
-
-        boolean isUpdated = userDao.updateUser(new User(id, name, password));
-
-        resp.sendRedirect("/?updated=" + isUpdated);
     }
 }
