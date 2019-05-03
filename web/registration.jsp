@@ -12,7 +12,9 @@
     <title>Registration</title>
 </head>
 <body>
-
+<center>
+    Форма регистрации
+    <br>
 <c:set var="message" value='${requestScope["message"]}' />
 <c:if test="${not empty message}"><p>${message}</p></c:if>
 
@@ -23,6 +25,6 @@
 </form>
 
 <a href="index.jsp">Войти в систему</a>
-
+</center>
 </body>
 </html>

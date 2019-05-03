@@ -14,7 +14,7 @@
     </title>
 </head>
 <body>
-
+<center>
 <c:set var="message" value='${requestScope["message"]}' />
 <c:if test="${not empty message}"><p>${message}</p></c:if>
 
@@ -23,8 +23,12 @@
     Пароль <input type="password" name="password"/>
     <input type="submit" value="Войти">
 </form>
+    <br>
+Еще не зарегистрированы?
+    </br>
+    <a href="registration.jsp">Зарегистрироваться</a>
+</center>
 
-<a href="registration.jsp">Зарегистрироваться</a>
 
 </body>
 </html>

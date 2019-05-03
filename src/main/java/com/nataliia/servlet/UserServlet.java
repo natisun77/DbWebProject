@@ -3,6 +3,7 @@ package com.nataliia.servlet;
 import com.nataliia.dao.UserDao;
 import com.nataliia.exceptions.UserNotFoundException;
 import com.nataliia.model.User;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,6 +17,7 @@ import java.io.IOException;
 @WebServlet(value = "/user")
 public class UserServlet extends HttpServlet {
     private UserDao userDao = new UserDao();
+    private static final Logger logger = Logger.getLogger(AdminServlet.class);
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
@@ -35,14 +37,17 @@ public class UserServlet extends HttpServlet {
 
         if ("admin".equals(role)) {
             User user = userDao.getUser(id).orElseThrow(UserNotFoundException::new);
+            logger.debug(user.getName()+ " asked for user information using ID " + "as" + user.getRole());
             req.setAttribute("user", user);
         }
 
         String urlToRedirect;
         if ("admin".equals(role)) {
+            logger.debug("Admin with ID="+ session.getAttribute("userId")+ " edits user");
             urlToRedirect = "/editUser.jsp";
         } else {
             req.setAttribute("message", "Ошибка. Войдите в систему снова.");
+            logger.debug("Access error");
             urlToRedirect = "/index.jsp";
         }
 
@@ -79,10 +84,12 @@ public class UserServlet extends HttpServlet {
                 throw new UserNotFoundException();
             }
             userDao.deleteUser(id);
+            logger.debug("Admin with ID="+ session.getAttribute("userId")+ " deletes user");
 
             resp.sendRedirect("/adminPage");
         } else {
             req.setAttribute("message", "Ошибка. Войдите в систему снова.");
+            logger.debug("Access error");
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
             dispatcher.forward(req, resp);
         }
@@ -113,6 +120,7 @@ public class UserServlet extends HttpServlet {
             resp.sendRedirect("/adminPage");
         } else {
             req.setAttribute("message", "Ошибка. Войдите в систему снова.");
+            logger.debug("Access error");
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
             dispatcher.forward(req, resp);
         }

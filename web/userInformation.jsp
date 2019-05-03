@@ -14,7 +14,7 @@
 <body>
 
 <c:set var="user" value='${requestScope["user"]}' />
-  
+
 Вы успешно зашли в систему, <c:out value="${user.name}" /> !
 
 
