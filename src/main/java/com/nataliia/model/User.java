@@ -4,6 +4,12 @@ public class User {
     private Long id;
     private String name;
     private String password;
+    private String role;
+
+    public User(String name, String password) {
+        this.name = name;
+        this.password = password;
+    }
 
     public User(Long id, String name, String password) {
         this.id = id;
@@ -11,9 +17,11 @@ public class User {
         this.password = password;
     }
 
-    public User(String name, String password) {
+    public User(Long id, String name, String password, String role) {
+        this.id = id;
         this.name = name;
         this.password = password;
+        this.role = role;
     }
 
     public Long getId() {
@@ -40,15 +48,12 @@ public class User {
         this.password = password;
     }
 
+    public String getRole() {
+        return role;
+    }
 
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override
@@ -67,5 +72,15 @@ public class User {
         int result = name.hashCode();
         result = 31 * result + password.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

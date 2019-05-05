@@ -7,12 +7,6 @@
 </head>
 <body>
 
-<c:choose>
-    <c:when test="${not empty param.deleted && param.deleted}">Вы успешно удалили пользователя.</c:when>
-    <c:when test="${not empty param.deleted && !param.deleted}">Во время удаления произошла ошибка, повторите позже.</c:when>
-    <c:when test="${not empty param.updated && param.updated}">Вы успешно отредактировали пользователя.</c:when>
-    <c:when test="${not empty param.updated && !param.updated}">Во время редактирования произошла ошибка, повторите позже.</c:when>
-</c:choose>
 
 <table>
     <%--@elvariable id="users" type="java.util.List<com.nataliia.model.User>"--%>
