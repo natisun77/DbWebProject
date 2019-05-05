@@ -1,7 +1,6 @@
 package com.nataliia.servlet;
 
 import com.nataliia.dao.UserDao;
-import com.nataliia.exceptions.UserNotFoundException;
 import com.nataliia.model.User;
 import org.apache.log4j.Logger;
 
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @WebServlet(value = "/adminPage")
 public class AdminServlet extends HttpServlet {

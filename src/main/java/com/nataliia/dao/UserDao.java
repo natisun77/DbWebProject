@@ -18,10 +18,11 @@ public class UserDao {
     public boolean addUser(User user) {
         Connection connection = DbConnector.connect().get();
         try {
-            String sql = "INSERT INTO users(name, password) VALUES (?, ?)";
+            String sql = "INSERT INTO users(name, email, password) VALUES (?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, user.getName());
-            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, user.getPassword());
             preparedStatement.executeUpdate();
             logger.debug(sql);
             return true;
@@ -42,9 +43,9 @@ public class UserDao {
             if (resultSet.next()) {
                 Long userID = resultSet.getLong(1);
                 String name = resultSet.getString(2);
-                String password = resultSet.getString(3);
-                User user = new User(userID, name, password);
-                System.out.println(user);
+                String email = resultSet.getString(3);
+                String password = resultSet.getString(4);
+                User user = new User(userID, name, email, password);
                 return Optional.of(user);
             }
         } catch (SQLException e) {
@@ -56,7 +57,7 @@ public class UserDao {
     public Optional<User> getUser(String name, String password) {
         Connection connection = DbConnector.connect().get();
         try {
-            String sql = "SELECT users.id, role\n" +
+            String sql = "SELECT users.id, email, role\n" +
                     "FROM users\n" +
                     " JOIN roles\n" +
                     "    ON users.role_id = roles.id\n" +
@@ -68,9 +69,9 @@ public class UserDao {
             logger.debug(sql);
             if (resultSet.next()) {
                 Long userID = resultSet.getLong(1);
-                String role = resultSet.getString(2);
-                User user = new User(userID, name, password, role);
-                System.out.println(user);
+                String email = resultSet.getString(2);
+                String role = resultSet.getString(3);
+                User user = new User(userID, name, email, password, role);
                 return Optional.of(user);
             }
         } catch (SQLException e) {
@@ -91,8 +92,9 @@ public class UserDao {
             while (resultSet.next()) {
                 Long userID = resultSet.getLong(1);
                 String name = resultSet.getString(2);
-                String password = resultSet.getString(3);
-                User user = new User(userID, name, password);
+                String email = resultSet.getString(3);
+                String password = resultSet.getString(4);
+                User user = new User(userID, name, email, password);
                 usersList.add(user);
             }
         } catch (SQLException e) {

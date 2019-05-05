@@ -20,6 +20,7 @@
 
 <form action="register" method="post">
     Имя <input type="text" name="name"/>
+    Имеил <input type="text" name="email"/>
     Пароль <input type="password" name="password"/>
     <input type="submit">
 </form>

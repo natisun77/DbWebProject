@@ -35,7 +35,7 @@ public class UserInformationServlet extends HttpServlet {
         if (user != null) {
             req.setAttribute("user", user);
             logger.debug(user.getName()+ " -member gets user information.");
-            urlToRedirect = "/userInformation.jsp";
+            urlToRedirect = "/allGoodsPage.jsp";
         } else {
             req.setAttribute("message", "Ошибка. Войдите в систему снова.");
             logger.debug("Error during login");

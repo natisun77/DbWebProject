@@ -18,7 +18,7 @@ import java.util.Optional;
 @WebServlet(value = "/login")
 public class LoginServlet extends HttpServlet {
     private UserDao userDao = new UserDao();
-    private static final Logger logger = Logger.getLogger(AdminServlet.class);
+    private static final Logger logger = Logger.getLogger(LoginServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,10 +37,12 @@ public class LoginServlet extends HttpServlet {
         if (userOptional.isPresent()) {
             User userFromDb = userOptional.get();
             session.setAttribute("userId", userFromDb.getId());
+            session.setAttribute("user", userOptional.get());
             session.setAttribute("role", userFromDb.getRole());
+
             if ("member".equals(userFromDb.getRole())) {
                 logger.debug( name + " entered system as member");
-                resp.sendRedirect("/userInformation");
+                resp.sendRedirect("/goods");
             } else if ("admin".equals(userFromDb.getRole())) {
                 logger.debug( name + " entered system as admin");
                 resp.sendRedirect("/adminPage");
