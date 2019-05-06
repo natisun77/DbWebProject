@@ -36,6 +36,7 @@ public class Code {
         this.goodId = goodId;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -43,10 +44,11 @@ public class Code {
 
         Code code = (Code) o;
 
-        if (value != null ? !value.equals(code.value) : code.value != null) return false;
+        if (value != code.value) return false;
         if (userId != null ? !userId.equals(code.userId) : code.userId != null) return false;
         return goodId != null ? goodId.equals(code.goodId) : code.goodId == null;
     }
+
 
     @Override
     public int hashCode() {

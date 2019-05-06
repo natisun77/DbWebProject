@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public class DbConnector {
-    private static final String dbUr1 = "jdbc:mysql://localhost:3306/natalka_test?serverTimezone=UTC";
+    private static final String dbUr1 = "jdbc:mysql://localhost:3306/natalka_test?serverTimezone=UTC&useSSL=false";
     private static final String name = "root";
     private static final String pass = "1111";
 

@@ -5,6 +5,7 @@ import com.nataliia.model.Code;
 import com.nataliia.model.User;
 import com.nataliia.service.MailService;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,16 +23,24 @@ public class BuyGoodServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
-        Long goodId = Long.valueOf(request.getParameter("goodId"));
-        String codeValue = request.getParameter("code");
-        User user = (User) request.getSession().getAttribute("user");
-        Code code = new Code(codeValue, user.getId(), goodId);
-        if (codeDao.checkCode(code)) {
-            response.getWriter().print("Оплата прошла");
+
+        Long userId = (Long) request.getSession().getAttribute("userId");
+
+        if (userId != null) {
+            Long goodId = Long.valueOf(request.getParameter("goodId"));
+            String code = request.getParameter("code");
+            
+            if (codeDao.isValidCode(code, userId, goodId)) {
+                response.getWriter().print("Оплата прошла");
+            } else {
+                response.getWriter().print("Оплата отменена");
+            }
         } else {
-            response.getWriter().print("Оплата отменена");
+            request.setAttribute("message", "Ошибка. Войдите в систему.");
+            String urlToRedirect = "/index.jsp";
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlToRedirect);
+            dispatcher.forward(request, response);
         }
-        ;
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

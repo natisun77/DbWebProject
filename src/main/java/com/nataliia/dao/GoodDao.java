@@ -15,9 +15,12 @@ import java.util.Optional;
 public class GoodDao {
     private static final Logger logger = Logger.getLogger(GoodDao.class);
 
+    public Connection getConnection() {
+        return DbConnector.connect().get();
+    }
+
     public int addGood(Good good) {
-        Connection connection = DbConnector.connect().get();
-        try {
+        try (Connection connection = getConnection()) {
             String sql = "INSERT INTO users(name, description, price) VALUES (?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, good.getName());
@@ -33,8 +36,7 @@ public class GoodDao {
     }
 
     public Optional<Good> getGoodById(Long id) {
-        Connection connection = DbConnector.connect().get();
-        try {
+        try (Connection connection = getConnection()){
             String sql = "SELECT * FROM goods WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
@@ -56,8 +58,7 @@ public class GoodDao {
 
     public List<Good> getGoods() {
         List<Good> goodsList = new ArrayList<>();
-        Connection connection = DbConnector.connect().get();
-        try {
+        try (Connection connection = getConnection()){
             Statement statement = connection.createStatement();
             String sql = "SELECT * FROM goods";
             statement.execute(sql);
