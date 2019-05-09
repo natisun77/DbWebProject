@@ -32,25 +32,9 @@ public class AdminAllGoodsServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        String role = (String) session.getAttribute("role");
-        String urlToRedirect;
-        logger.debug("Start of filter for adminGoods page");
-
-        if ("admin".equals(role)) {
-            List<Good> goods = goodDao.getGoods();
-            request.setAttribute("goods", goods);
-            urlToRedirect = "/allGoodsAdminPage.jsp";
-            logger.debug("Filter has approved admin access for " + session.getAttribute("userId"));
-        } else {
-            request.setAttribute("message", "Ошибка. Войдите в систему снова.");
-            urlToRedirect = "/index.jsp";
-            logger.debug("Filter has denied access.");
-        }
-
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlToRedirect);
+        List<Good> goods = goodDao.getGoods();
+        request.setAttribute("goods", goods);
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/allGoodsAdminPage.jsp");
         dispatcher.forward(request, response);
     }
-
-
 }

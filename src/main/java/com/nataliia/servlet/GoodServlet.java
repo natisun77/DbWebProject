@@ -20,30 +20,13 @@ public class GoodServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(GoodServlet.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Long id;
-        try {
-            id = Long.parseLong(request.getParameter("id"));
-        } catch (NumberFormatException e) {
-            throw new GoodNotFoundException();
-        }
-        HttpSession session = request.getSession();
-        String role = (String) session.getAttribute("role");
+        long goodId = getGoodIdFromRequest(request);
+        Good good = goodDao.getGoodById(goodId).orElseThrow(GoodNotFoundException::new);
+        request.setAttribute("good", good);
 
-        if ("admin".equals(role)) {
-            Good good = goodDao.getGoodById(id).orElseThrow(GoodNotFoundException::new);
-            request.setAttribute("good", good);
-            logger.debug("Admin with ID=" + session.getAttribute("userId") + " edits good with ID" + id + ".");
-        }
-        String urlToRedirect;
-        if ("admin".equals(role)) {
-            logger.debug("Admin with ID=" + session.getAttribute("userId") + " edits good with ID" + id + ".");
-            urlToRedirect = "/editGood.jsp";
-        } else {
-            request.setAttribute("message", "Ошибка. Войдите в систему снова.");
-            logger.debug("Access error");
-            urlToRedirect = "/index.jsp";
-        }
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlToRedirect);
+        HttpSession session = request.getSession();
+        logger.debug("Admin with ID=" + session.getAttribute("userId") + " edits good with ID" + goodId + ".");
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/editGood.jsp");
         dispatcher.forward(request, response);
     }
 
@@ -59,22 +42,13 @@ public class GoodServlet extends HttpServlet {
             doPut(request, response);
         } else {
             HttpSession session = request.getSession();
-            String role = (String) session.getAttribute("role");
-            if ("admin".equals(role)) {
-                String name = request.getParameter("name");
-                String description = request.getParameter("description");
-                Double price = Double.parseDouble(request.getParameter("price"));
-                logger.debug("Admin with ID=" + session.getAttribute("userId") + " adds new good" + name + ".");
-                Good good = new Good(name, description, price);
-                goodDao.addGood(good);
-                response.sendRedirect("/adminGoods");
-            } else {
-                request.setAttribute("message", "Ошибка. Войдите в систему снова.");
-                logger.debug("Access error");
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-                dispatcher.forward(request, response);
-            }
+            String name = request.getParameter("name");
+            String description = request.getParameter("description");
+            double price = Double.parseDouble(request.getParameter("price"));
 
+            logger.debug("Admin with ID=" + session.getAttribute("userId") + " adds new good" + name + ".");
+            goodDao.addGood(new Good(name, description, price));
+            response.sendRedirect("/adminGoods");
         }
     }
 
@@ -82,49 +56,30 @@ public class GoodServlet extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
         String description = req.getParameter("description");
-        Double price = Double.parseDouble(req.getParameter("price"));
+        double price = Double.parseDouble(req.getParameter("price"));
+        long goodId = getGoodIdFromRequest(req);
+        goodDao.updateGood(new Good(getGoodIdFromRequest(req), name, description, price));
 
         HttpSession session = req.getSession();
-        String role = (String) session.getAttribute("role");
-        if ("admin".equals(role)) {
-            Long id;
-            try {
-                id = Long.parseLong(req.getParameter("id"));
-            } catch (NumberFormatException e) {
-                throw new GoodNotFoundException();
-            }
-            goodDao.updateGood(new Good(id, name, description, price));
-            logger.debug("Admin with ID=" + session.getAttribute("userId") + " deletes good with " + id + ".");
-
-            resp.sendRedirect("/adminGoods");
-        } else {
-            req.setAttribute("message", "Ошибка. Войдите в систему снова.");
-            logger.debug("Access error");
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-            dispatcher.forward(req, resp);
-        }
+        logger.debug("Admin with ID=" + session.getAttribute("userId") + " updates good with " + goodId + ".");
+        resp.sendRedirect("/adminGoods");
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        String role = (String) session.getAttribute("role");
-        if ("admin".equals(role)) {
-            Long id;
-            try {
-                id = Long.parseLong(req.getParameter("id"));
-            } catch (NumberFormatException e) {
-                throw new GoodNotFoundException();
-            }
-            goodDao.deleteGood(id);
-            logger.debug("Admin with ID=" + session.getAttribute("userId") + " deletes good with " + id + ".");
+        long goodId = getGoodIdFromRequest(req);
+        goodDao.deleteGood(goodId);
 
-            resp.sendRedirect("/adminGoods");
-        } else {
-            req.setAttribute("message", "Ошибка. Войдите в систему снова.");
-            logger.debug("Access error");
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-            dispatcher.forward(req, resp);
+        HttpSession session = req.getSession();
+        logger.debug("Admin with ID=" + session.getAttribute("userId") + " deletes good with " + goodId + ".");
+        resp.sendRedirect("/adminGoods");
+    }
+
+    private long getGoodIdFromRequest(HttpServletRequest req) {
+        try {
+            return Long.parseLong(req.getParameter("id"));
+        } catch (NumberFormatException e) {
+            throw new GoodNotFoundException();
         }
     }
 }

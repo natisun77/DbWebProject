@@ -20,9 +20,7 @@ public class UserInformationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         Long idSession = (Long) req.getSession().getAttribute("userId");
-
         User user = null;
         if (idSession != null) {
             Optional<User> userOptional = userDao.getUser(idSession);
@@ -34,7 +32,7 @@ public class UserInformationServlet extends HttpServlet {
         String urlToRedirect;
         if (user != null) {
             req.setAttribute("user", user);
-            logger.debug(user.getName()+ " -member gets user information.");
+            logger.debug(user.getName() + " -member gets user information.");
             urlToRedirect = "/allGoodsPage.jsp";
         } else {
             req.setAttribute("message", "Ошибка. Войдите в систему снова.");

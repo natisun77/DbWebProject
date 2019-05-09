@@ -14,6 +14,7 @@
 
 <form action="${pageContext.request.contextPath}/user" method="post">
     Имя <input type="text" name="name"/>
+    Имейл <input type="text" name="email"/>
     Пароль <input type="password" name="password"/>
     <input type="submit">
 </form>

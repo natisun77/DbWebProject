@@ -29,7 +29,7 @@ public class BuyGoodServlet extends HttpServlet {
         if (userId != null) {
             Long goodId = Long.valueOf(request.getParameter("goodId"));
             String code = request.getParameter("code");
-            
+
             if (codeDao.isValidCode(code, userId, goodId)) {
                 response.getWriter().print("Оплата прошла");
             } else {

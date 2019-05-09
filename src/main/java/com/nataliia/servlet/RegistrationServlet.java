@@ -29,11 +29,11 @@ public class RegistrationServlet extends HttpServlet {
         String password = req.getParameter("password");
         String salt = HashUtil.getRandomSalt();
 
-        User user = new User(name,email,password, salt);
-        String urlToRedirect = null;
-        String message = null;
+        User user = new User(name, email, password, salt);
+        String urlToRedirect;
+        String message;
         logger.debug("Start of new registration");
-        if (userDao.addUser(user)){
+        if (userDao.addUser(user)) {
             urlToRedirect = "/index.jsp";
             message = "Вы успешно зарегистрировались. Войдите в систему.";
             logger.debug("Successful registration of " + name);

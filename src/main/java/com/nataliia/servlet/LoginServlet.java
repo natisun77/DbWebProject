@@ -29,7 +29,6 @@ public class LoginServlet extends HttpServlet {
 
         String nameFromForm = req.getParameter("name");
         String passwordFromForm = req.getParameter("password");
-
         Optional<User> userOptional = userDao.getUser(nameFromForm);
 
         HttpSession session = req.getSession();
@@ -38,23 +37,22 @@ public class LoginServlet extends HttpServlet {
         if (userOptional.isPresent()) {
             session.setAttribute("user", userOptional.get());
             User userFromDb = userOptional.get();
-            String hashPasswordFromForm = HashUtil.getSHA512SecurePassword(passwordFromForm,userFromDb.getSalt());
-            if (userFromDb.getPassword().equals(hashPasswordFromForm)){
-
+            String hashPasswordFromForm = HashUtil.getSHA512SecurePassword(passwordFromForm, userFromDb.getSalt());
+            if (userFromDb.getPassword().equals(hashPasswordFromForm)) {
                 session.setAttribute("userId", userFromDb.getId());
                 session.setAttribute("role", userFromDb.getRole());
             }
 
             if ("member".equals(userFromDb.getRole())) {
-                logger.debug( nameFromForm + " entered system as member");
+                logger.debug(nameFromForm + " entered system as member");
                 resp.sendRedirect("/goods");
             } else if ("admin".equals(userFromDb.getRole())) {
-                logger.debug( nameFromForm + " entered system as admin");
+                logger.debug(nameFromForm + " entered system as admin");
                 resp.sendRedirect("/adminPage");
             }
         } else {
             String message = "Неправильный логин или пароль. Попробуйте снова";
-            logger.debug( nameFromForm + " did not enter system. Name or password error.");
+            logger.debug(nameFromForm + " did not enter system. Name or password error.");
             req.setAttribute("message", message);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
             dispatcher.forward(req, resp);
