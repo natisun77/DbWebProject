@@ -15,25 +15,27 @@ import java.util.Optional;
 public class UserDao {
     private static final Logger logger = Logger.getLogger(UserDao.class);
 
+    public Connection getConnection() {
+        return DbConnector.connect().get();
+    }
     public boolean addUser(User user) {
-        Connection connection = DbConnector.connect().get();
-        try {
-            String sql = "INSERT INTO users(name, password) VALUES (?, ?)";
+       try ( Connection connection = getConnection()){
+            String sql = "INSERT INTO users(name, email, password) VALUES (?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, user.getName());
-            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, user.getPassword());
             preparedStatement.executeUpdate();
             logger.debug(sql);
             return true;
         } catch (SQLException e) {
-            logger.error("Can't get user name", e);
+            logger.error("Can't add user", e);
         }
         return false;
     }
 
     public Optional<User> getUser(Long id) {
-        Connection connection = DbConnector.connect().get();
-        try {
+        try ( Connection connection = getConnection()){
             String sql = "SELECT * FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
@@ -42,9 +44,9 @@ public class UserDao {
             if (resultSet.next()) {
                 Long userID = resultSet.getLong(1);
                 String name = resultSet.getString(2);
-                String password = resultSet.getString(3);
-                User user = new User(userID, name, password);
-                System.out.println(user);
+                String email = resultSet.getString(3);
+                String password = resultSet.getString(4);
+                User user = new User(userID, name, email, password);
                 return Optional.of(user);
             }
         } catch (SQLException e) {
@@ -54,9 +56,8 @@ public class UserDao {
     }
 
     public Optional<User> getUser(String name, String password) {
-        Connection connection = DbConnector.connect().get();
-        try {
-            String sql = "SELECT users.id, role\n" +
+        try ( Connection connection = getConnection()){
+            String sql = "SELECT users.id, email, role\n" +
                     "FROM users\n" +
                     " JOIN roles\n" +
                     "    ON users.role_id = roles.id\n" +
@@ -68,9 +69,9 @@ public class UserDao {
             logger.debug(sql);
             if (resultSet.next()) {
                 Long userID = resultSet.getLong(1);
-                String role = resultSet.getString(2);
-                User user = new User(userID, name, password, role);
-                System.out.println(user);
+                String email = resultSet.getString(2);
+                String role = resultSet.getString(3);
+                User user = new User(userID, name, email, password, role);
                 return Optional.of(user);
             }
         } catch (SQLException e) {
@@ -81,8 +82,7 @@ public class UserDao {
 
     public List<User> getUsers() {
         List<User> usersList = new ArrayList<>();
-        Connection connection = DbConnector.connect().get();
-        try {
+        try ( Connection connection = getConnection()){
             Statement statement = connection.createStatement();
             String sql = "SELECT * FROM users";
             statement.execute(sql);
@@ -91,8 +91,9 @@ public class UserDao {
             while (resultSet.next()) {
                 Long userID = resultSet.getLong(1);
                 String name = resultSet.getString(2);
-                String password = resultSet.getString(3);
-                User user = new User(userID, name, password);
+                String email = resultSet.getString(3);
+                String password = resultSet.getString(4);
+                User user = new User(userID, name, email, password);
                 usersList.add(user);
             }
         } catch (SQLException e) {
@@ -102,8 +103,7 @@ public class UserDao {
     }
 
     public boolean updateUser(User user) {
-        Connection connection = DbConnector.connect().get();
-        try {
+        try ( Connection connection = getConnection()){
             String sql = "UPDATE users SET name = ?, password = ? WHERE id = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -120,8 +120,7 @@ public class UserDao {
     }
 
     public boolean deleteUser(long id) {
-        Connection connection = DbConnector.connect().get();
-        try {
+        try ( Connection connection = getConnection()){
             String sql = "DELETE FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);

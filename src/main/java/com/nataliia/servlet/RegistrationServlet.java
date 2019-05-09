@@ -24,9 +24,10 @@ public class RegistrationServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         String name = req.getParameter("name");
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        User user = new User(name, password);
+        User user = new User(name,email,password);
         String urlToRedirect = null;
         String message = null;
         logger.debug("Start of new registration");

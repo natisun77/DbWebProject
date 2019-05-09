@@ -19,8 +19,8 @@
 <c:if test="${not empty message}"><p>${message}</p></c:if>
 
 <form action="login" method="post">
-    Имя <input type="text" name="name"/>
-    Пароль <input type="password" name="password"/>
+    Имя <input type="text" name="name"/></br></br>
+    Пароль <input type="password" name="password"/></br></br>
     <input type="submit" value="Войти">
 </form>
     <br>
