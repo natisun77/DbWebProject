@@ -3,18 +3,24 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Информация о пользователях</title>
 </head>
 <body>
 
 
 <table>
-    <%--@elvariable id="users" type="java.util.List<com.nataliia.model.User>"--%>
+    <tr>
+        <td>ID</td>
+        <td>Имя</td>
+        <td>Имейл</td>
+        <td>Роль</td>
+    </tr>
     <c:forEach items="${users}" var="user">
         <tr>
             <td><c:out value="${user.id}"/></td>
             <td><c:out value="${user.name}"/></td>
-            <td><c:out value="${user.password}"/></td>
+            <td><c:out value="${user.email}"/></td>
+            <td><c:out value="${user.role}"/></td>
 
             <td>
                 <form action="${pageContext.request.contextPath}/user" method="get">
@@ -36,6 +42,10 @@
 
 <form action="${pageContext.request.contextPath}/addUser.jsp" method="get">
     <input type="submit" value="Добавить пользователя"/>
+</form>
+
+<form action="${pageContext.request.contextPath}/adminGoods" method="get">
+    <input type="submit" value="Товары"/>
 </form>
 
 </body>

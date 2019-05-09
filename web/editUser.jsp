@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Изменение пользователя</title>
 </head>
 <body>
 
@@ -16,7 +16,8 @@
     <input type="hidden" name="action" value="put"/>
     <input type="hidden" name="id" value="${user.id}"/>
     Имя <input type="text" name="name" value="${user.name}"/>
-    Пароль <input type="password" name="password" value="${user.password}"/>
+    Имейл <input type="text" name="password" value="${user.email}"/>
+
     <input type="submit">
 </form>
 

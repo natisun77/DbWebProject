@@ -16,12 +16,12 @@ import java.util.List;
 
 @WebServlet(value = "/adminPage")
 public class AdminServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(AdminServlet.class);
     private UserDao userDao = new UserDao();
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
-    private static final Logger logger = Logger.getLogger(AdminServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -1,6 +1,7 @@
 package com.nataliia.dao;
 
 import com.nataliia.model.User;
+import com.nataliia.utils.HashUtil;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -18,13 +19,15 @@ public class UserDao {
     public Connection getConnection() {
         return DbConnector.connect().get();
     }
+
     public boolean addUser(User user) {
-       try ( Connection connection = getConnection()){
-            String sql = "INSERT INTO users(name, email, password) VALUES (?, ?, ?)";
+        try (Connection connection = getConnection()) {
+            String sql = "INSERT INTO users(name, email, password, salt) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getEmail());
-            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.setString(3, HashUtil.getSHA512SecurePassword(user.getPassword(), user.getSalt()));
+            preparedStatement.setString(4, user.getSalt());
             preparedStatement.executeUpdate();
             logger.debug(sql);
             return true;
@@ -35,17 +38,17 @@ public class UserDao {
     }
 
     public Optional<User> getUser(Long id) {
-        try ( Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             String sql = "SELECT * FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             logger.debug(sql);
             if (resultSet.next()) {
-                Long userID = resultSet.getLong(1);
-                String name = resultSet.getString(2);
-                String email = resultSet.getString(3);
-                String password = resultSet.getString(4);
+                Long userID = resultSet.getLong("id");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String password = resultSet.getString("password");
                 User user = new User(userID, name, email, password);
                 return Optional.of(user);
             }
@@ -55,34 +58,35 @@ public class UserDao {
         return Optional.empty();
     }
 
-    public Optional<User> getUser(String name, String password) {
-        try ( Connection connection = getConnection()){
-            String sql = "SELECT users.id, email, role\n" +
+    public Optional<User> getUser(String name) {
+        try (Connection connection = getConnection()) {
+            String sql = "SELECT users.id, email, password, role, salt\n" +
                     "FROM users\n" +
                     " JOIN roles\n" +
                     "    ON users.role_id = roles.id\n" +
-                    "where users.name = ? and users.password = ?";
+                    "where users.name = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, name);
-            preparedStatement.setString(2, password);
             ResultSet resultSet = preparedStatement.executeQuery();
             logger.debug(sql);
             if (resultSet.next()) {
-                Long userID = resultSet.getLong(1);
-                String email = resultSet.getString(2);
-                String role = resultSet.getString(3);
-                User user = new User(userID, name, email, password, role);
+                Long userID = resultSet.getLong("id");
+                String email = resultSet.getString("email");
+                String password = resultSet.getString("password");
+                String role = resultSet.getString("role");
+                String salt = resultSet.getString("salt");
+                User user = new User(userID, name, email, password, role, salt);
                 return Optional.of(user);
             }
         } catch (SQLException e) {
-            logger.error("Can't get user by name and password", e);
+            logger.error("Can't get user by name", e);
         }
         return Optional.empty();
     }
 
     public List<User> getUsers() {
         List<User> usersList = new ArrayList<>();
-        try ( Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
             String sql = "SELECT * FROM users";
             statement.execute(sql);
@@ -103,7 +107,7 @@ public class UserDao {
     }
 
     public boolean updateUser(User user) {
-        try ( Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             String sql = "UPDATE users SET name = ?, password = ? WHERE id = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -120,7 +124,7 @@ public class UserDao {
     }
 
     public boolean deleteUser(long id) {
-        try ( Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             String sql = "DELETE FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);

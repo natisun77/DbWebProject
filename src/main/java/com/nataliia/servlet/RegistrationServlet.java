@@ -2,6 +2,7 @@ package com.nataliia.servlet;
 
 import com.nataliia.dao.UserDao;
 import com.nataliia.model.User;
+import com.nataliia.utils.HashUtil;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -26,8 +27,9 @@ public class RegistrationServlet extends HttpServlet {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
+        String salt = HashUtil.getRandomSalt();
 
-        User user = new User(name,email,password);
+        User user = new User(name,email,password, salt);
         String urlToRedirect = null;
         String message = null;
         logger.debug("Start of new registration");

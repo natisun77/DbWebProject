@@ -3,6 +3,7 @@ package com.nataliia.servlet;
 import com.nataliia.dao.UserDao;
 import com.nataliia.exceptions.UserNotFoundException;
 import com.nataliia.model.User;
+import com.nataliia.utils.HashUtil;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -26,30 +27,34 @@ public class LoginServlet extends HttpServlet {
         resp.setContentType("text/html");
         resp.setCharacterEncoding("UTF-8");
 
-        String name = req.getParameter("name");
-        String password = req.getParameter("password");
+        String nameFromForm = req.getParameter("name");
+        String passwordFromForm = req.getParameter("password");
 
-        Optional<User> userOptional = userDao.getUser(name, password);
+        Optional<User> userOptional = userDao.getUser(nameFromForm);
 
         HttpSession session = req.getSession();
         logger.debug("Start of login");
 
         if (userOptional.isPresent()) {
-            User userFromDb = userOptional.get();
-            session.setAttribute("userId", userFromDb.getId());
             session.setAttribute("user", userOptional.get());
-            session.setAttribute("role", userFromDb.getRole());
+            User userFromDb = userOptional.get();
+            String hashPasswordFromForm = HashUtil.getSHA512SecurePassword(passwordFromForm,userFromDb.getSalt());
+            if (userFromDb.getPassword().equals(hashPasswordFromForm)){
+
+                session.setAttribute("userId", userFromDb.getId());
+                session.setAttribute("role", userFromDb.getRole());
+            }
 
             if ("member".equals(userFromDb.getRole())) {
-                logger.debug( name + " entered system as member");
+                logger.debug( nameFromForm + " entered system as member");
                 resp.sendRedirect("/goods");
             } else if ("admin".equals(userFromDb.getRole())) {
-                logger.debug( name + " entered system as admin");
+                logger.debug( nameFromForm + " entered system as admin");
                 resp.sendRedirect("/adminPage");
             }
         } else {
             String message = "Неправильный логин или пароль. Попробуйте снова";
-            logger.debug( name + " did not enter system. Name or password error.");
+            logger.debug( nameFromForm + " did not enter system. Name or password error.");
             req.setAttribute("message", message);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
             dispatcher.forward(req, resp);

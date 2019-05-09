@@ -1,5 +1,7 @@
 package com.nataliia.model;
 
+import com.nataliia.utils.HashUtil;
+
 public class User {
     private Long id;
     private String name;
@@ -7,10 +9,13 @@ public class User {
     private String password;
     private String role;
 
-    public User(String name, String email, String password) {
+    private String salt;
+
+    public User(String name, String email, String password, String salt) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.salt = salt;
     }
 
     public User(Long id, String name, String password) {
@@ -19,11 +24,11 @@ public class User {
         this.password = password;
     }
 
-    public User(String name, String email, String password, String role) {
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role = role;
+        salt = HashUtil.getRandomSalt();
     }
 
     public User(Long id, String name, String email, String password) {
@@ -31,14 +36,24 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+        salt = HashUtil.getRandomSalt();
     }
 
-    public User(Long id, String name, String email, String password, String role) {
+    public User(Long id, String name, String email, String password, String role, String salt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.salt = salt;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public Long getId() {
