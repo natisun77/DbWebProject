@@ -9,7 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>ShowInformation</title>
+    <title>Товары для покупки</title>
 </head>
 <body>
 
@@ -21,7 +21,6 @@
         <td>Цена</td>
         <td>Купить!</td>
     </tr>
-
 
     <c:forEach items="${goods}" var="good">
         <tr>
@@ -37,7 +36,6 @@
         </tr>
     </c:forEach>
 </table>
-
 
 </body>
 </html>

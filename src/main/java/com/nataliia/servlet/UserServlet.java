@@ -25,33 +25,14 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id;
-        try {
-            id = Long.parseLong(req.getParameter("id"));
-        } catch (NumberFormatException e) {
-            throw new UserNotFoundException();
-        }
+        Long id = getUserByIdFromRequest(req);
+        User user = userDao.getUser(id).orElseThrow(UserNotFoundException::new);
+        logger.debug(user.getName() + " asked for user information using ID " + "as" + user.getRole());
+        req.setAttribute("user", user);
 
         HttpSession session = req.getSession();
-        String role = (String) session.getAttribute("role");
-
-        if ("admin".equals(role)) {
-            User user = userDao.getUser(id).orElseThrow(UserNotFoundException::new);
-            logger.debug(user.getName()+ " asked for user information using ID " + "as" + user.getRole());
-            req.setAttribute("user", user);
-        }
-
-        String urlToRedirect;
-        if ("admin".equals(role)) {
-            logger.debug("Admin with ID="+ session.getAttribute("userId")+ " edits user");
-            urlToRedirect = "/editUser.jsp";
-        } else {
-            req.setAttribute("message", "Ошибка. Войдите в систему снова.");
-            logger.debug("Access error");
-            urlToRedirect = "/index.jsp";
-        }
-
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlToRedirect);
+        logger.debug("Admin with ID=" + session.getAttribute("userId") + " edits user");
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/editUser.jsp");
         dispatcher.forward(req, resp);
     }
 
@@ -67,32 +48,25 @@ public class UserServlet extends HttpServlet {
         } else if ("put".equals(action)) {
             doPut(req, resp);
         } else {
-            resp.sendRedirect("/index.jsp");
+            HttpSession session = req.getSession();
+            String name = req.getParameter("name");
+            String email = req.getParameter("email");
+            String password = req.getParameter("password");
+
+            logger.debug("Admin with ID=" + session.getAttribute("userId") + " adds new good" + name + ".");
+            User user = new User(name, email, password);
+            userDao.addUser(user);
+            resp.sendRedirect("/adminPage");
         }
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Long id = getUserByIdFromRequest(req);
+        userDao.deleteUser(id);
         HttpSession session = req.getSession();
-        String role = (String) session.getAttribute("role");
-
-        if ("admin".equals(role)) {
-            Long id;
-            try {
-                id = Long.parseLong(req.getParameter("id"));
-            } catch (NumberFormatException e) {
-                throw new UserNotFoundException();
-            }
-            userDao.deleteUser(id);
-            logger.debug("Admin with ID="+ session.getAttribute("userId")+ " deletes user");
-
-            resp.sendRedirect("/adminPage");
-        } else {
-            req.setAttribute("message", "Ошибка. Войдите в систему снова.");
-            logger.debug("Access error");
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-            dispatcher.forward(req, resp);
-        }
+        logger.debug("Admin with ID=" + session.getAttribute("userId") + " deletes user.");
+        resp.sendRedirect("/adminPage");
     }
 
     @Override
@@ -103,26 +77,19 @@ public class UserServlet extends HttpServlet {
 
         String name = req.getParameter("name");
         String password = req.getParameter("password");
+        long id = getUserByIdFromRequest(req);
+        userDao.updateUser(new User(id, name, password));
 
         HttpSession session = req.getSession();
-        String role = (String) session.getAttribute("role");
+        logger.debug("Admin with ID=" + session.getAttribute("userId") + " updates user with " + id + ".");
+        resp.sendRedirect("/adminPage");
+    }
 
-        if ("admin".equals(role)) {
-            Long id;
-            try {
-                id = Long.parseLong(req.getParameter("id"));
-            } catch (NumberFormatException e) {
-                throw new UserNotFoundException();
-            }
-
-            userDao.updateUser(new User(id, name, password));
-
-            resp.sendRedirect("/adminPage");
-        } else {
-            req.setAttribute("message", "Ошибка. Войдите в систему снова.");
-            logger.debug("Access error");
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-            dispatcher.forward(req, resp);
+    private long getUserByIdFromRequest(HttpServletRequest request) {
+        try {
+            return Long.parseLong(request.getParameter("id"));
+        } catch (NumberFormatException e) {
+            throw new UserNotFoundException();
         }
     }
 }

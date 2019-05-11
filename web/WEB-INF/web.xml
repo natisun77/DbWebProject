@@ -10,4 +10,9 @@
         <location>/404.jsp</location>
     </error-page>
 
+    <error-page>
+        <exception-type>com.nataliia.exceptions.GoodNotFoundException</exception-type>
+        <location>/404.jsp</location>
+    </error-page>
+
 </web-app>

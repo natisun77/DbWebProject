@@ -19,24 +19,23 @@ public class GoodDao {
         return DbConnector.connect().get();
     }
 
-    public int addGood(Good good) {
+    public boolean addGood(Good good) {
         try (Connection connection = getConnection()) {
-            String sql = "INSERT INTO users(name, description, price) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO goods(name, description, price) VALUES (?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, good.getName());
             preparedStatement.setString(2, good.getDescription());
             preparedStatement.setDouble(3, good.getPrice());
-            int result = preparedStatement.executeUpdate();
             logger.debug(sql);
-            return result;
+            return 1 == preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Can't add a good", e);
-            return 0;
+            logger.error("Can't add good", e);
+            return false;
         }
     }
 
     public Optional<Good> getGoodById(Long id) {
-        try (Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             String sql = "SELECT * FROM goods WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
@@ -58,7 +57,7 @@ public class GoodDao {
 
     public List<Good> getGoods() {
         List<Good> goodsList = new ArrayList<>();
-        try (Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
             String sql = "SELECT * FROM goods";
             statement.execute(sql);
@@ -76,5 +75,37 @@ public class GoodDao {
             logger.error("Can't get goods from DB", e);
         }
         return goodsList;
+    }
+
+    public boolean updateGood(Good good) {
+        try (Connection connection = getConnection()) {
+            String sql = "UPDATE goods SET name = ?, description = ?, price = ? WHERE id = ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, good.getName());
+            preparedStatement.setString(2, good.getDescription());
+            preparedStatement.setDouble(3, good.getPrice());
+            preparedStatement.setLong(4, good.getId());
+            logger.debug(sql);
+
+            return preparedStatement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            logger.error("Can't update information of good. ", e);
+        }
+        return false;
+    }
+
+    public boolean deleteGood(long id) {
+        try (Connection connection = getConnection()) {
+            String sql = "DELETE FROM goods WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            logger.debug(sql);
+
+            return preparedStatement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            logger.error("Can't delete good. ", e);
+        }
+        return false;
     }
 }

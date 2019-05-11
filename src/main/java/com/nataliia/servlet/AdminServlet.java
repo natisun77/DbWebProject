@@ -16,34 +16,23 @@ import java.util.List;
 
 @WebServlet(value = "/adminPage")
 public class AdminServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(AdminServlet.class);
     private UserDao userDao = new UserDao();
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
-    private static final Logger logger = Logger.getLogger(AdminServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        HttpSession session = req.getSession();
-        String role = (String) session.getAttribute("role");
-        String urlToRedirect;
-        logger.debug("Start of filter for admin page");
-
-        if ("admin".equals(role)) {
-            List<User> users = userDao.getUsers();
-            req.setAttribute("users", users);
-            urlToRedirect = "/allUsers.jsp";
-            logger.debug("Filter has approved admin access for " + session.getAttribute("userId"));
-
-        } else {
-            req.setAttribute("message", "Ошибка. Войдите в систему снова.");
-            urlToRedirect = "/index.jsp";
-            logger.debug("Filter has denied access.");
-        }
-
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlToRedirect);
+        List<User> users = userDao.getUsers();
+        req.setAttribute("users", users);
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/allUsers.jsp");
         dispatcher.forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doGet(req, resp);
     }
 }
