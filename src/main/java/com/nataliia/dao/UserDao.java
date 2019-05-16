@@ -39,7 +39,10 @@ public class UserDao {
 
     public Optional<User> getUser(Long id) {
         try (Connection connection = getConnection()) {
-            String sql = "SELECT * FROM users WHERE id = ?";
+            String sql = "SELECT * FROM users " +
+                    "JOIN roles " +
+                    "ON users.role_id = roles.id" +
+                    " WHERE users.id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -49,7 +52,9 @@ public class UserDao {
                 String name = resultSet.getString("name");
                 String email = resultSet.getString("email");
                 String password = resultSet.getString("password");
-                User user = new User(userID, name, email, password);
+               // String role = resultSet.getString("role");
+                String salt = resultSet.getString("salt");
+               User user = new User(userID, name, password);
                 return Optional.of(user);
             }
         } catch (SQLException e) {
@@ -75,7 +80,7 @@ public class UserDao {
                 String password = resultSet.getString("password");
                 String role = resultSet.getString("role");
                 String salt = resultSet.getString("salt");
-                User user = new User(userID, name, email, password, role, salt);
+                User user = new User(userID, name, password);
                 return Optional.of(user);
             }
         } catch (SQLException e) {
@@ -88,7 +93,7 @@ public class UserDao {
         List<User> usersList = new ArrayList<>();
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
-            String sql = "SELECT * FROM users";
+            String sql = "SELECT * FROM users JOIN roles ON users.role_id = roles.id";
             statement.execute(sql);
             ResultSet resultSet = statement.getResultSet();
             logger.debug(sql);
@@ -96,8 +101,10 @@ public class UserDao {
                 Long userID = resultSet.getLong(1);
                 String name = resultSet.getString(2);
                 String email = resultSet.getString(3);
-                String password = resultSet.getString(4);
-                User user = new User(userID, name, email, password);
+                String salt = resultSet.getString(6);
+                String password = HashUtil.getSHA512SecurePassword(resultSet.getString(4), salt);
+                String role = resultSet.getString(5);
+                User user = new User(userID, name, password);
                 usersList.add(user);
             }
         } catch (SQLException e) {
@@ -108,12 +115,16 @@ public class UserDao {
 
     public boolean updateUser(User user) {
         try (Connection connection = getConnection()) {
-            String sql = "UPDATE users SET name = ?, password = ? WHERE id = ?";
+            String sql = "UPDATE users SET name = ?, email = ?, password = ?, " +
+                    "role_id = (SELECT id FROM roles WHERE role = ?)" +
+                    " WHERE id = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, user.getName());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setLong(3, user.getId());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, user.getPassword());
+            //preparedStatement.setString(4, user.getRole());
+            preparedStatement.setLong(5, user.getId());
             logger.debug(sql);
 
             return preparedStatement.executeUpdate() == 1;

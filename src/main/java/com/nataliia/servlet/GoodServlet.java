@@ -1,6 +1,6 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.GoodDao;
+import com.nataliia.dao.GoodDaoHibImpl;
 import com.nataliia.exceptions.GoodNotFoundException;
 import com.nataliia.model.Good;
 import org.apache.log4j.Logger;
@@ -16,12 +16,12 @@ import java.io.IOException;
 
 @WebServlet(value = "/good")
 public class GoodServlet extends HttpServlet {
-    private GoodDao goodDao = new GoodDao();
+    private GoodDaoHibImpl goodDao = new GoodDaoHibImpl();
     private static final Logger logger = Logger.getLogger(GoodServlet.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         long goodId = getGoodIdFromRequest(request);
-        Good good = goodDao.getGoodById(goodId).orElseThrow(GoodNotFoundException::new);
+        Good good = goodDao.findGoodById(goodId);
         request.setAttribute("good", good);
 
         HttpSession session = request.getSession();
@@ -31,10 +31,6 @@ public class GoodServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-
         String action = request.getParameter("action");
         if ("delete".equals(action)) {
             doDelete(request, response);
@@ -68,7 +64,7 @@ public class GoodServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long goodId = getGoodIdFromRequest(req);
-        goodDao.deleteGood(goodId);
+        goodDao.deleteGoodById(goodId);
 
         HttpSession session = req.getSession();
         logger.debug("Admin with ID=" + session.getAttribute("userId") + " deletes good with " + goodId + ".");

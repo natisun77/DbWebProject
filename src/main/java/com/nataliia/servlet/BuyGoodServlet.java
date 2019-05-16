@@ -1,6 +1,7 @@
 package com.nataliia.servlet;
 
 import com.nataliia.dao.CodeDao;
+import com.nataliia.dao.CodeDaoHibImpl;
 import com.nataliia.model.Code;
 import com.nataliia.model.User;
 import com.nataliia.service.MailService;
@@ -17,13 +18,9 @@ import java.io.IOException;
 public class BuyGoodServlet extends HttpServlet {
 
     private static final MailService mailService = new MailService();
-    private static final CodeDao codeDao = new CodeDao();
+    private static final CodeDaoHibImpl codeDao = new CodeDaoHibImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-
         Long userId = (Long) request.getSession().getAttribute("userId");
 
         if (userId != null) {

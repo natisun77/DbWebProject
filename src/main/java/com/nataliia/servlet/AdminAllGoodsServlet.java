@@ -1,6 +1,7 @@
 package com.nataliia.servlet;
 
 import com.nataliia.dao.GoodDao;
+import com.nataliia.dao.GoodDaoHibImpl;
 import com.nataliia.dao.UserDao;
 import com.nataliia.model.Good;
 import com.nataliia.model.User;
@@ -20,9 +21,9 @@ import java.util.List;
 public class AdminAllGoodsServlet extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(AdminAllGoodsServlet.class);
-    private GoodDao goodDao = new GoodDao();
+    private GoodDaoHibImpl goodDao = new GoodDaoHibImpl();
 
-    public void setGoodDao(GoodDao goodDao) {
+    public void setGoodDao(GoodDaoHibImpl goodDao) {
         this.goodDao = goodDao;
     }
 

@@ -1,6 +1,7 @@
 package com.nataliia.servlet;
 
 import com.nataliia.dao.UserDao;
+import com.nataliia.dao.UserDaoHibImpl;
 import com.nataliia.model.User;
 import org.apache.log4j.Logger;
 
@@ -17,9 +18,9 @@ import java.util.List;
 @WebServlet(value = "/adminPage")
 public class AdminServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(AdminServlet.class);
-    private UserDao userDao = new UserDao();
+    private UserDaoHibImpl userDao = new UserDaoHibImpl();
 
-    public void setUserDao(UserDao userDao) {
+    public void setUserDao(UserDaoHibImpl userDao) {
         this.userDao = userDao;
     }
 

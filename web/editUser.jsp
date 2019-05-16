@@ -16,7 +16,10 @@
     <input type="hidden" name="action" value="put"/>
     <input type="hidden" name="id" value="${user.id}"/>
     Имя <input type="text" name="name" value="${user.name}"/>
-    Имейл <input type="text" name="password" value="${user.email}"/>
+    Имейл <input type="text" name="email" value="${user.email}"/>
+    Пароль <input type="text" name="password" value="${user.password}"/>
+    Роль <input type="text" name="role" value="${user.role}"/>
+    Соль <input type="text" name="salt" value="${user.salt}"/>
 
     <input type="submit">
 </form>

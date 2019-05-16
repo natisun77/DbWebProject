@@ -1,6 +1,7 @@
 package com.nataliia.servlet;
 
 import com.nataliia.dao.GoodDao;
+import com.nataliia.dao.GoodDaoHibImpl;
 import com.nataliia.model.Good;
 import org.apache.log4j.Logger;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @WebServlet(value = "/goods")
 public class AllGoodsServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(AdminServlet.class);
-    private static final GoodDao goodDao = new GoodDao();
+    private static final GoodDaoHibImpl goodDao = new GoodDaoHibImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request,response);

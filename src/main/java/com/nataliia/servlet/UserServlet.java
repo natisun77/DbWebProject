@@ -1,6 +1,6 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.UserDao;
+import com.nataliia.dao.UserDaoHibImpl;
 import com.nataliia.exceptions.UserNotFoundException;
 import com.nataliia.model.User;
 import org.apache.log4j.Logger;
@@ -16,17 +16,17 @@ import java.io.IOException;
 
 @WebServlet(value = "/user")
 public class UserServlet extends HttpServlet {
-    private UserDao userDao = new UserDao();
+    private UserDaoHibImpl userDao = new UserDaoHibImpl();
     private static final Logger logger = Logger.getLogger(AdminServlet.class);
 
-    public void setUserDao(UserDao userDao) {
+    public void setUserDao(UserDaoHibImpl userDao) {
         this.userDao = userDao;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = getUserByIdFromRequest(req);
-        User user = userDao.getUser(id).orElseThrow(UserNotFoundException::new);
+        User user = userDao.findUserById(id);
         logger.debug(user.getName() + " asked for user information using ID " + "as" + user.getRole());
         req.setAttribute("user", user);
 
@@ -38,10 +38,6 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html");
-        resp.setCharacterEncoding("UTF-8");
-
         String action = req.getParameter("action");
         if ("delete".equals(action)) {
             doDelete(req, resp);
@@ -63,7 +59,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = getUserByIdFromRequest(req);
-        userDao.deleteUser(id);
+        userDao.deleteUserById(id);
         HttpSession session = req.getSession();
         logger.debug("Admin with ID=" + session.getAttribute("userId") + " deletes user.");
         resp.sendRedirect("/adminPage");
@@ -71,14 +67,12 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html");
-        resp.setCharacterEncoding("UTF-8");
-
         String name = req.getParameter("name");
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
+        String role = req.getParameter("role");
         long id = getUserByIdFromRequest(req);
-        userDao.updateUser(new User(id, name, password));
+     //   userDao.updateUser(new User(id, name, password));
 
         HttpSession session = req.getSession();
         logger.debug("Admin with ID=" + session.getAttribute("userId") + " updates user with " + id + ".");
@@ -88,6 +82,7 @@ public class UserServlet extends HttpServlet {
     private long getUserByIdFromRequest(HttpServletRequest request) {
         try {
             return Long.parseLong(request.getParameter("id"));
+
         } catch (NumberFormatException e) {
             throw new UserNotFoundException();
         }

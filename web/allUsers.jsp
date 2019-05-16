@@ -13,14 +13,18 @@
         <td>ID</td>
         <td>Имя</td>
         <td>Имейл</td>
+        <td>Пароль</td>
         <td>Роль</td>
+        <td>Соль</td>
     </tr>
     <c:forEach items="${users}" var="user">
         <tr>
             <td><c:out value="${user.id}"/></td>
             <td><c:out value="${user.name}"/></td>
             <td><c:out value="${user.email}"/></td>
+            <td><c:out value="${user.password}"/></td>
             <td><c:out value="${user.role}"/></td>
+            <td><c:out value="${user.salt}"/></td>
 
             <td>
                 <form action="${pageContext.request.contextPath}/user" method="get">

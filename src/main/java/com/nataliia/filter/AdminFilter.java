@@ -1,5 +1,6 @@
 package com.nataliia.filter;
 
+import com.nataliia.dao.UserDaoHibImpl;
 import com.nataliia.model.User;
 import org.apache.log4j.Logger;
 
@@ -14,12 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/adminPage", "/adminGoods", "/user", "/good"})
-
 public class AdminFilter implements Filter {
     private static final Logger logger = Logger.getLogger(AdminFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+
     }
 
     @Override

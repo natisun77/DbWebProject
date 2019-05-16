@@ -1,9 +1,28 @@
 package com.nataliia.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "code")
 public class Code {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private long id;
+
+    @Column(name = "value")
     private String value;
+
+    @Column(name = "userId")
     private Long userId;
+
+    @Column(name = "goodId")
     private Long goodId;
 
     public Code(String value, Long userId, Long goodId) {
