@@ -3,8 +3,11 @@ package com.nataliia.dao;
 import com.nataliia.model.User;
 import com.nataliia.utils.HashUtil;
 import com.nataliia.utils.HibernateSessionFactoryUtil;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
 
@@ -29,7 +32,10 @@ public class UserDaoHibImpl {
     }
 
     public User findUserByName(String name) {
-        return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(User.class, name);
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(User.class);
+        criteria.add(Restrictions.eq("name", name));
+        return (User) criteria.uniqueResult();
     }
 
     public void deleteUserById(long id) {

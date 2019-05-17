@@ -14,30 +14,30 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table (name = "users")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
 
-    @Column (name = "name")
+    @Column(name = "name")
     private String name;
 
-    @Column (name = "email")
+    @Column(name = "email")
     private String email;
 
-    @Column (name = "password")
+    @Column(name = "password")
     private String password;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="role_id")
+    @JoinColumn(name = "role_id")
     private Role role;
 
-    @Column (name = "salt")
+    @Column(name = "salt")
     private String salt;
 
-    public User(){
+    public User() {
     }
 
     public User(Long id, String name, String password) {
@@ -53,7 +53,7 @@ public class User {
         salt = HashUtil.getRandomSalt();
     }
 
-    public User(Long id, String name, String email, String password, Role  role, String salt) {
+    public User(Long id, String name, String email, String password, Role role, String salt) {
         this(id, name, email, password, role);
         this.salt = salt;
     }
@@ -66,13 +66,13 @@ public class User {
     }
 
     public User(String name, String email, String password, String salt) {
-        this (name, email, password);
+        this(name, email, password);
         this.salt = salt;
         role = new Role("member");
     }
 
     public User(String name, String email, String password, Role role) {
-        this (name, email, password);
+        this(name, email, password);
         this.role = role;
     }
 

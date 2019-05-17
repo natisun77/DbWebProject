@@ -25,6 +25,9 @@ public class Code {
     @Column(name = "goodId")
     private Long goodId;
 
+    public Code() {
+    }
+
     public Code(String value, Long userId, Long goodId) {
         this.value = value;
         this.userId = userId;

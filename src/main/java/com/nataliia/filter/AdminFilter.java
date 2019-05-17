@@ -28,7 +28,7 @@ public class AdminFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         User user = (User) request.getSession().getAttribute("user");
         logger.debug("Start of filter for admin rights");
-        if (user != null && "admin".equals(user.getRole())) {
+        if (user != null && "admin".equals(user.getRole().getName())) {
             logger.debug("Admin rights for user with ID=" + user.getId() + " were confirmed.");
             filterChain.doFilter(servletRequest, servletResponse);
         } else {

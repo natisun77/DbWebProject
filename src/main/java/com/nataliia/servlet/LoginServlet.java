@@ -40,10 +40,10 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("role", userFromDb.getRole());
             }
 
-            if ("member".equals(userFromDb.getRole())) {
+            if ("member".equals(userFromDb.getRole().getName())) {
                 logger.debug(nameFromForm + " entered system as member");
                 resp.sendRedirect("/goods");
-            } else if ("admin".equals(userFromDb.getRole())) {
+            } else if ("admin".equals(userFromDb.getRole().getName())) {
                 logger.debug(nameFromForm + " entered system as admin");
                 resp.sendRedirect("/adminPage");
             }

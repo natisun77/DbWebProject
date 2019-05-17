@@ -24,6 +24,9 @@ public class Good {
     @Column (name = "price")
     private double price;
 
+    public Good(){
+    }
+
     public Good(long id, String name, String description, double price) {
         this.id = id;
         this.name = name;
