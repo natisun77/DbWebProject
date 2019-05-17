@@ -16,7 +16,7 @@ import java.io.IOException;
 @WebServlet(value = "/register")
 public class RegistrationServlet extends HttpServlet {
     private UserDaoHibImpl userDao = new UserDaoHibImpl();
-    private static final Logger logger = Logger.getLogger(RegistrationServlet.class);
+    private static final Logger LOGGER = Logger.getLogger(RegistrationServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -28,15 +28,15 @@ public class RegistrationServlet extends HttpServlet {
         User user = new User(name, email, password, salt);
         String urlToRedirect;
         String message;
-        logger.debug("Start of new registration");
+        LOGGER.debug("Start of new registration");
         if (userDao.findUserByName(name) != null) {
             urlToRedirect = "/index.jsp";
             message = "Вы успешно зарегистрировались. Войдите в систему.";
-            logger.debug("Successful registration of " + name);
+            LOGGER.debug("Successful registration of " + name);
         } else {
             urlToRedirect = "/registration.jsp";
             message = "Ошибка при регистрации. Попробуйте снова.";
-            logger.debug("Error during registration");
+            LOGGER.debug("Error during registration");
         }
 
         req.setAttribute("message", message);

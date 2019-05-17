@@ -1,6 +1,5 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.CodeDao;
 import com.nataliia.dao.CodeDaoHibImpl;
 import com.nataliia.model.Code;
 import com.nataliia.model.User;
@@ -17,8 +16,8 @@ import java.io.IOException;
 @WebServlet(value = "/buy")
 public class BuyGoodServlet extends HttpServlet {
 
-    private static final MailService mailService = new MailService();
-    private static final CodeDaoHibImpl codeDao = new CodeDaoHibImpl();
+    private static final MailService MAIL_SERVICE = new MailService();
+    private static final CodeDaoHibImpl CODE_DAO_HIB = new CodeDaoHibImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long userId = (Long) request.getSession().getAttribute("userId");
@@ -27,7 +26,7 @@ public class BuyGoodServlet extends HttpServlet {
             Long goodId = Long.valueOf(request.getParameter("goodId"));
             String code = request.getParameter("code");
 
-            if (codeDao.isValidCode(code, userId, goodId)) {
+            if (CODE_DAO_HIB.isValidCode(code, userId, goodId)) {
                 response.getWriter().print("Оплата прошла");
             } else {
                 response.getWriter().print("Оплата отменена");
@@ -44,9 +43,9 @@ public class BuyGoodServlet extends HttpServlet {
         Long goodId = Long.parseLong(request.getParameter("id"));
 
         User user = (User) request.getSession().getAttribute("user");
-        String randomCode = mailService.sendMailWithCode(user.getEmail());
+        String randomCode = MAIL_SERVICE.sendMailWithCode(user.getEmail());
         Code code = new Code(randomCode, user.getId(), goodId);
-        codeDao.addCode(code);
+        CODE_DAO_HIB.addCode(code);
         request.setAttribute("goodId", goodId);
 
         request.getRequestDispatcher("buyConfirmation.jsp").forward(request, response);

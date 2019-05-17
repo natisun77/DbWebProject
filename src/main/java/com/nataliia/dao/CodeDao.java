@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CodeDao {
-    private static final Logger logger = Logger.getLogger(GoodDao.class);
+    private static final Logger LOGGER = Logger.getLogger(GoodDao.class);
 
     public Connection getConnection() {
         return DbConnector.connect().get();
@@ -24,10 +24,10 @@ public class CodeDao {
             preparedStatement.setLong(3, code.getGoodId());
 
             preparedStatement.executeUpdate();
-            logger.debug(sql);
+            LOGGER.debug(sql);
             return true;
         } catch (SQLException e) {
-            logger.error("Can't add a code", e);
+            LOGGER.error("Can't add a code", e);
             return false;
         }
     }
@@ -41,12 +41,12 @@ public class CodeDao {
             preparedStatement.setLong(2, goodId);
             preparedStatement.setString(3, value);
             ResultSet resultSet = preparedStatement.executeQuery();
-            logger.debug(sql);
+            LOGGER.debug(sql);
             if (resultSet.next()) {
                 return resultSet.getBoolean(1);
             }
         } catch (SQLException e) {
-            logger.error("isValidCode sql failed ", e);
+            LOGGER.error("isValidCode sql failed ", e);
         }
         return false;
     }

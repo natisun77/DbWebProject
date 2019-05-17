@@ -11,7 +11,9 @@ import java.util.List;
 public class CodeDaoHibImpl {
 
     public void addCode(Code code) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Session session = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession();
         Transaction transaction = session.beginTransaction();
         session.save(code);
         transaction.commit();
@@ -20,9 +22,12 @@ public class CodeDaoHibImpl {
 
     public boolean isValidCode(String value, long userId, long goodId) {
 
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Session session = HibernateSessionFactoryUtil
+                .getSessionFactory()
+                .openSession();
         Transaction transaction = session.beginTransaction();
-        String sql = "SELECT EXISTS(SELECT * FROM confirmation_code WHERE user_id = ? and good_id = ? and value_code = ? " +
+        String sql = "SELECT EXISTS(SELECT * FROM confirmation_code " +
+                "WHERE user_id = ? and good_id = ? and value_code = ? " +
                 " and timestampdiff (minute, creation_date, now()) <1)";
         SQLQuery sqlQuery = session.createSQLQuery(sql);
         sqlQuery.setLong(1, userId);

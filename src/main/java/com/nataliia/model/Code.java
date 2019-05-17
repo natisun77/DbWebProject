@@ -6,9 +6,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalTime;
 
 @Entity
-@Table(name = "code")
+@Table(name = "confirmation_code")
 public class Code {
 
     @Id
@@ -16,14 +17,18 @@ public class Code {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "value")
+    @Column(name = "value_code")
     private String value;
 
-    @Column(name = "userId")
+    @Column(name = "user_Id")
     private Long userId;
 
-    @Column(name = "goodId")
+    @Column(name = "good_Id")
     private Long goodId;
+
+    @Column(name = "creation_date")
+    LocalTime creationDate;
+
 
     public Code() {
     }
@@ -32,6 +37,7 @@ public class Code {
         this.value = value;
         this.userId = userId;
         this.goodId = goodId;
+        creationDate = LocalTime.now();
     }
 
     public String getValue() {

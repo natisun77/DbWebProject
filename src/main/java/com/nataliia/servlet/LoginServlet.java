@@ -1,6 +1,5 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.UserDao;
 import com.nataliia.dao.UserDaoHibImpl;
 import com.nataliia.model.User;
 import com.nataliia.utils.HashUtil;
@@ -14,14 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @WebServlet(value = "/login")
 public class LoginServlet extends HttpServlet {
     private UserDaoHibImpl userDao = new UserDaoHibImpl();
-    private static final Logger logger = Logger.getLogger(LoginServlet.class);
+    private static final Logger LOGGER = Logger.getLogger(LoginServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -30,7 +26,7 @@ public class LoginServlet extends HttpServlet {
         User userFromDb = userDao.findUserByName(nameFromForm);
 
         HttpSession session = req.getSession();
-        logger.debug("Start of login");
+        LOGGER.debug("Start of login");
 
         if (userFromDb != null) {
             String hashPasswordFromForm = HashUtil.getSHA512SecurePassword(passwordFromForm, userFromDb.getSalt());
@@ -41,15 +37,15 @@ public class LoginServlet extends HttpServlet {
             }
 
             if ("member".equals(userFromDb.getRole().getName())) {
-                logger.debug(nameFromForm + " entered system as member");
+                LOGGER.debug(nameFromForm + " entered system as member");
                 resp.sendRedirect("/goods");
             } else if ("admin".equals(userFromDb.getRole().getName())) {
-                logger.debug(nameFromForm + " entered system as admin");
+                LOGGER.debug(nameFromForm + " entered system as admin");
                 resp.sendRedirect("/adminPage");
             }
         } else {
             String message = "Неправильный логин или пароль. Попробуйте снова";
-            logger.debug(nameFromForm + " did not enter system. Name or password error.");
+            LOGGER.debug(nameFromForm + " did not enter system. Name or password error.");
             req.setAttribute("message", message);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
             dispatcher.forward(req, resp);

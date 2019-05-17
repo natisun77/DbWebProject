@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class GoodDao {
-    private static final Logger logger = Logger.getLogger(GoodDao.class);
+    private static final Logger LOGGER = Logger.getLogger(GoodDao.class);
 
     public Connection getConnection() {
         return DbConnector.connect().get();
@@ -26,10 +26,10 @@ public class GoodDao {
             preparedStatement.setString(1, good.getName());
             preparedStatement.setString(2, good.getDescription());
             preparedStatement.setDouble(3, good.getPrice());
-            logger.debug(sql);
+            LOGGER.debug(sql);
             return 1 == preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Can't add good", e);
+            LOGGER.error("Can't add good", e);
             return false;
         }
     }
@@ -40,7 +40,7 @@ public class GoodDao {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            logger.debug(sql);
+            LOGGER.debug(sql);
             if (resultSet.next()) {
                 Long goodId = resultSet.getLong(1);
                 String name = resultSet.getString(2);
@@ -50,7 +50,7 @@ public class GoodDao {
                 return Optional.of(good);
             }
         } catch (SQLException e) {
-            logger.error("Can't get good by its ID ", e);
+            LOGGER.error("Can't get good by its ID ", e);
         }
         return Optional.empty();
     }
@@ -62,7 +62,7 @@ public class GoodDao {
             String sql = "SELECT * FROM goods";
             statement.execute(sql);
             ResultSet allGoodsResultSet = statement.getResultSet();
-            logger.debug(sql);
+            LOGGER.debug(sql);
             while (allGoodsResultSet.next()) {
                 Long goodId = allGoodsResultSet.getLong(1);
                 String name = allGoodsResultSet.getString(2);
@@ -72,7 +72,7 @@ public class GoodDao {
                 goodsList.add(good);
             }
         } catch (SQLException e) {
-            logger.error("Can't get goods from DB", e);
+            LOGGER.error("Can't get goods from DB", e);
         }
         return goodsList;
     }
@@ -86,11 +86,11 @@ public class GoodDao {
             preparedStatement.setString(2, good.getDescription());
             preparedStatement.setDouble(3, good.getPrice());
             preparedStatement.setLong(4, good.getId());
-            logger.debug(sql);
+            LOGGER.debug(sql);
 
             return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
-            logger.error("Can't update information of good. ", e);
+            LOGGER.error("Can't update information of good. ", e);
         }
         return false;
     }
@@ -100,11 +100,11 @@ public class GoodDao {
             String sql = "DELETE FROM goods WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
-            logger.debug(sql);
+            LOGGER.debug(sql);
 
             return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
-            logger.error("Can't delete good. ", e);
+            LOGGER.error("Can't delete good. ", e);
         }
         return false;
     }

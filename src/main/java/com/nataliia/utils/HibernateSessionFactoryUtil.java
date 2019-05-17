@@ -4,14 +4,17 @@ import com.nataliia.model.Code;
 import com.nataliia.model.Good;
 import com.nataliia.model.Role;
 import com.nataliia.model.User;
+import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory;
+    private static final Logger LOGGER = Logger.getLogger(HibernateSessionFactoryUtil.class);
 
-    private HibernateSessionFactoryUtil() {}
+    private HibernateSessionFactoryUtil() {
+    }
 
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
@@ -25,7 +28,7 @@ public class HibernateSessionFactoryUtil {
                 sessionFactory = configuration.buildSessionFactory(builder.build());
 
             } catch (Exception e) {
-                System.out.println("Исключение!" + e);
+                LOGGER.error("Can't make sessionFactory", e);;
             }
         }
         return sessionFactory;

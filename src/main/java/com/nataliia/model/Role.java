@@ -24,7 +24,6 @@ public class Role {
     private User user;
 
     public Role(){
-
     }
 
     public Role(String name) {

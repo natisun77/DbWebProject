@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserDao {
-    private static final Logger logger = Logger.getLogger(UserDao.class);
+    private static final Logger LOGGER = Logger.getLogger(UserDao.class);
 
     public Connection getConnection() {
         return DbConnector.connect().get();
@@ -29,10 +29,10 @@ public class UserDao {
             preparedStatement.setString(3, HashUtil.getSHA512SecurePassword(user.getPassword(), user.getSalt()));
             preparedStatement.setString(4, user.getSalt());
             preparedStatement.executeUpdate();
-            logger.debug(sql);
+            LOGGER.debug(sql);
             return true;
         } catch (SQLException e) {
-            logger.error("Can't add user", e);
+            LOGGER.error("Can't add user", e);
         }
         return false;
     }
@@ -46,7 +46,7 @@ public class UserDao {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            logger.debug(sql);
+            LOGGER.debug(sql);
             if (resultSet.next()) {
                 Long userID = resultSet.getLong("id");
                 String name = resultSet.getString("name");
@@ -58,7 +58,7 @@ public class UserDao {
                 return Optional.of(user);
             }
         } catch (SQLException e) {
-            logger.error("Can't get user by his ID ", e);
+            LOGGER.error("Can't get user by his ID ", e);
         }
         return Optional.empty();
     }
@@ -73,7 +73,7 @@ public class UserDao {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
-            logger.debug(sql);
+            LOGGER.debug(sql);
             if (resultSet.next()) {
                 Long userID = resultSet.getLong("id");
                 String email = resultSet.getString("email");
@@ -84,7 +84,7 @@ public class UserDao {
                 return Optional.of(user);
             }
         } catch (SQLException e) {
-            logger.error("Can't get user by name", e);
+            LOGGER.error("Can't get user by name", e);
         }
         return Optional.empty();
     }
@@ -96,7 +96,7 @@ public class UserDao {
             String sql = "SELECT * FROM users JOIN roles ON users.role_id = roles.id";
             statement.execute(sql);
             ResultSet resultSet = statement.getResultSet();
-            logger.debug(sql);
+            LOGGER.debug(sql);
             while (resultSet.next()) {
                 Long userID = resultSet.getLong(1);
                 String name = resultSet.getString(2);
@@ -108,7 +108,7 @@ public class UserDao {
                 usersList.add(user);
             }
         } catch (SQLException e) {
-            logger.error("Can't get users from DB", e);
+            LOGGER.error("Can't get users from DB", e);
         }
         return usersList;
     }
@@ -125,11 +125,11 @@ public class UserDao {
             preparedStatement.setString(3, user.getPassword());
             //preparedStatement.setString(4, user.getRole());
             preparedStatement.setLong(5, user.getId());
-            logger.debug(sql);
+            LOGGER.debug(sql);
 
             return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
-            logger.error("Can't update user information", e);
+            LOGGER.error("Can't update user information", e);
         }
         return false;
     }
@@ -139,11 +139,11 @@ public class UserDao {
             String sql = "DELETE FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
-            logger.debug(sql);
+            LOGGER.debug(sql);
 
             return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
-            logger.error("Can't delete user information", e);
+            LOGGER.error("Can't delete user information", e);
         }
         return false;
     }

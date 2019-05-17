@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @WebFilter (urlPatterns = "/*")
 public class EncodingFilter implements Filter {
-    private static final Logger logger = Logger.getLogger(EncodingFilter.class);
+    private static final Logger LOGGER = Logger.getLogger(EncodingFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -23,7 +23,7 @@ public class EncodingFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        logger.debug("Start of encoding filter");
+        LOGGER.debug("Start of encoding filter");
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");

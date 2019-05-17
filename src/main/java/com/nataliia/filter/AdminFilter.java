@@ -1,6 +1,5 @@
 package com.nataliia.filter;
 
-import com.nataliia.dao.UserDaoHibImpl;
 import com.nataliia.model.User;
 import org.apache.log4j.Logger;
 
@@ -16,7 +15,7 @@ import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/adminPage", "/adminGoods", "/user", "/good"})
 public class AdminFilter implements Filter {
-    private static final Logger logger = Logger.getLogger(AdminFilter.class);
+    private static final Logger LOGGER = Logger.getLogger(AdminFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -27,12 +26,12 @@ public class AdminFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         User user = (User) request.getSession().getAttribute("user");
-        logger.debug("Start of filter for admin rights");
+        LOGGER.debug("Start of filter for admin rights");
         if (user != null && "admin".equals(user.getRole().getName())) {
-            logger.debug("Admin rights for user with ID=" + user.getId() + " were confirmed.");
+            LOGGER.debug("Admin rights for user with ID=" + user.getId() + " were confirmed.");
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            logger.debug("Access was denied.");
+            LOGGER.debug("Access was denied.");
             request.setAttribute("message", "Ошибка доступа. Войдите в систему снова.");
             request.getRequestDispatcher("index.jsp").forward(request, servletResponse);
         }
