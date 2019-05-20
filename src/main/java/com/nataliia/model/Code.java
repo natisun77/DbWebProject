@@ -1,11 +1,14 @@
 package com.nataliia.model;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -27,8 +30,7 @@ public class Code {
     private Long goodId;
 
     @Column(name = "creation_date")
-    LocalTime creationDate;
-
+    private LocalDateTime localDateTime;
 
     public Code() {
     }
@@ -37,7 +39,7 @@ public class Code {
         this.value = value;
         this.userId = userId;
         this.goodId = goodId;
-        creationDate = LocalTime.now();
+        localDateTime = LocalDateTime.now();
     }
 
     public String getValue() {
@@ -64,6 +66,14 @@ public class Code {
         this.goodId = goodId;
     }
 
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -76,7 +86,6 @@ public class Code {
         if (userId != null ? !userId.equals(code.userId) : code.userId != null) return false;
         return goodId != null ? goodId.equals(code.goodId) : code.goodId == null;
     }
-
 
     @Override
     public int hashCode() {
