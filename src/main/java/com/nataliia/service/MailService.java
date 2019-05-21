@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class MailService {
-    private static final Logger logger = Logger.getLogger(MailService.class);
+    private static final Logger LOGGER = Logger.getLogger(MailService.class);
 
     public String sendMailWithCode(String userEmail) {
         final String username = "khmel.test.email@gmail.com";
@@ -37,10 +37,7 @@ public class MailService {
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("khmel.test.email@gmail.com"));
-//            message.setRecipients(
-//                    Message.RecipientType.TO,
-//                    InternetAddress.parse(userEmail)
-//            );
+
 
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(userEmail));
 
@@ -50,11 +47,11 @@ public class MailService {
 
             Transport.send(message);
 
-            logger.info("Done");
+            LOGGER.info("Done");
             return randomCode;
 
         } catch (MessagingException e) {
-            logger.error("Can't send message", e);
+            LOGGER.error("Can't send message", e);
             return "";
         }
     }
