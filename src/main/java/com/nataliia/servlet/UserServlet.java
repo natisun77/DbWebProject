@@ -1,6 +1,6 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.UserDaoHibImpl;
+import com.nataliia.dao.impl.UserDaoHibImpl;
 import com.nataliia.exceptions.UserNotFoundException;
 import com.nataliia.model.Role;
 import com.nataliia.model.User;
@@ -27,7 +27,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = getUserByIdFromRequest(req);
-        User user = userDao.findUserById(id);
+        User user = userDao.getById(User.class, id);
         LOGGER.debug(user.getName() + " asked for user information using ID " + "as" + user.getRole());
         req.setAttribute("user", user);
 
@@ -52,7 +52,7 @@ public class UserServlet extends HttpServlet {
 
             LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " adds new good" + name + ".");
             User user = new User(name, email, password, new Role("member"));
-            userDao.addUser(user);
+            userDao.add(user);
             resp.sendRedirect("/adminPage");
         }
     }
@@ -60,7 +60,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = getUserByIdFromRequest(req);
-        userDao.deleteUserById(id);
+        userDao.deleteById(User.class, id);
         HttpSession session = req.getSession();
         LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " deletes user.");
         resp.sendRedirect("/adminPage");
@@ -73,7 +73,7 @@ public class UserServlet extends HttpServlet {
         String password = req.getParameter("password");
         String role = req.getParameter("role");
         long id = getUserByIdFromRequest(req);
-        userDao.updateUser(new User(id, name, email, password, new Role(role)));
+        userDao.update(new User(id, name, email, password, new Role(role)));
 
         HttpSession session = req.getSession();
         LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " updates user with " + id + ".");

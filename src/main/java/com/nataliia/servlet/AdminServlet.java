@@ -1,6 +1,7 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.UserDaoHibImpl;
+import com.nataliia.dao.UserDao;
+import com.nataliia.dao.impl.UserDaoHibImpl;
 import com.nataliia.model.User;
 import org.apache.log4j.Logger;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @WebServlet(value = "/adminPage")
 public class AdminServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(AdminServlet.class);
-    private UserDaoHibImpl userDao = new UserDaoHibImpl();
+    private UserDao userDao = new UserDaoHibImpl();
 
     public void setUserDao(UserDaoHibImpl userDao) {
         this.userDao = userDao;
@@ -24,7 +25,7 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<User> users = userDao.getUsers();
+        List<User> users = userDao.getAll(User.class);
         req.setAttribute("users", users);
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/allUsers.jsp");
         dispatcher.forward(req, resp);

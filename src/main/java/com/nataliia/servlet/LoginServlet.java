@@ -1,6 +1,6 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.UserDaoHibImpl;
+import com.nataliia.dao.impl.UserDaoHibImpl;
 import com.nataliia.model.User;
 import com.nataliia.utils.HashUtil;
 import org.apache.log4j.Logger;
@@ -23,7 +23,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String nameFromForm = req.getParameter("name");
         String passwordFromForm = req.getParameter("password");
-        User userFromDb = userDao.findUserByName(nameFromForm);
+        User userFromDb = userDao.getUserByName(nameFromForm);
 
         HttpSession session = req.getSession();
         LOGGER.debug("Start of login");

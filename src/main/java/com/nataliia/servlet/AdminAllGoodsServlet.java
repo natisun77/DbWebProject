@@ -1,6 +1,7 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.GoodDaoHibImpl;
+import com.nataliia.dao.GoodDao;
+import com.nataliia.dao.impl.GoodDaoHibImpl;
 import com.nataliia.model.Good;
 import org.apache.log4j.Logger;
 
@@ -17,7 +18,7 @@ import java.util.List;
 public class AdminAllGoodsServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(AdminAllGoodsServlet.class);
-    private GoodDaoHibImpl goodDao = new GoodDaoHibImpl();
+    private GoodDao goodDao = new GoodDaoHibImpl();
 
     public void setGoodDao(GoodDaoHibImpl goodDao) {
         this.goodDao = goodDao;
@@ -29,7 +30,7 @@ public class AdminAllGoodsServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Good> goods = goodDao.getGoods();
+        List<Good> goods = goodDao.getAll(Good.class);
         request.setAttribute("goods", goods);
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/allGoodsAdminPage.jsp");
         dispatcher.forward(request, response);
