@@ -4,12 +4,16 @@ import com.nataliia.dao.UserDao;
 import com.nataliia.model.User;
 import com.nataliia.utils.HashUtil;
 import com.nataliia.utils.HibernateSessionFactoryUtil;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
+import java.util.Optional;
+
 public class UserDaoHibImpl extends GenericDaoImpl<User> implements UserDao {
+    private static final Logger logger = Logger.getLogger(UserDaoHibImpl.class);
 
     @Override
     public void add(User user) {
@@ -18,15 +22,17 @@ public class UserDaoHibImpl extends GenericDaoImpl<User> implements UserDao {
     }
 
     @Override
-    public User getUserByName(String name) {
+    public Optional<User> getUserByName(String name) {
         SessionFactory sessionFactory = HibernateSessionFactoryUtil
                 .getSessionFactory();
         try (Session session = sessionFactory.openSession()) {
             Criteria criteria = session.createCriteria(User.class);
             criteria.add(Restrictions.eq("name", name));
-            return (User) criteria.uniqueResult();
+            logger.debug("User with name " + name + " was found.");
+            return Optional.ofNullable((User) criteria.uniqueResult());
         } catch (Exception e) {
-            return null;
+            logger.error("User with name " + name + " was not found." , e);
+            return Optional.empty();
         }
     }
 }

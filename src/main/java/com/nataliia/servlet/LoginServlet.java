@@ -23,7 +23,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String nameFromForm = req.getParameter("name");
         String passwordFromForm = req.getParameter("password");
-        User userFromDb = userDao.getUserByName(nameFromForm);
+        User userFromDb = (userDao.getUserByName(nameFromForm)).get();
 
         HttpSession session = req.getSession();
         LOGGER.debug("Start of login");

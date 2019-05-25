@@ -29,7 +29,7 @@ public class RegistrationServlet extends HttpServlet {
         String urlToRedirect;
         String message;
         LOGGER.debug("Start of new registration");
-        if (userDao.getUserByName(name) != null) {
+        if ((userDao.getUserByName(name)).get() != null) {
             urlToRedirect = "/index.jsp";
             message = "Вы успешно зарегистрировались. Войдите в систему.";
             LOGGER.debug("Successful registration of " + name);

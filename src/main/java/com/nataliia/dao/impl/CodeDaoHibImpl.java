@@ -11,7 +11,7 @@ import org.hibernate.SessionFactory;
 import java.math.BigInteger;
 
 public class CodeDaoHibImpl extends GenericDaoImpl<Code> implements CodeDao {
-    private static final Logger LOGGER = Logger.getLogger(CodeDaoHibImpl.class);
+    private static final Logger logger = Logger.getLogger(CodeDaoHibImpl.class);
 
     @Override
     public boolean isValidCode(String value, long userId) {
@@ -21,13 +21,13 @@ public class CodeDaoHibImpl extends GenericDaoImpl<Code> implements CodeDao {
             String sql = "SELECT EXISTS(SELECT * FROM confirmation_code " +
                     "WHERE user_id = ? and value_code = ? " +
                     " and timestampdiff (minute, creation_date, now()) <1)";
-            LOGGER.debug(sql);
+            logger.debug(sql);
             SQLQuery sqlQuery = session.createSQLQuery(sql);
             sqlQuery.setLong(0, userId);
             sqlQuery.setString(1, value);
             return  ((BigInteger) sqlQuery.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
         } catch (Exception e) {
-            LOGGER.error("Code is not valid", e);
+            logger.error("Code is not valid", e);
             return false;
         }
     }
