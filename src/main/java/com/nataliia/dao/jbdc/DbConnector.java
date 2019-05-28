@@ -1,4 +1,4 @@
-package com.nataliia.dao;
+package com.nataliia.dao.jbdc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

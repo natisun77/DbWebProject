@@ -1,6 +1,6 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.UserDaoHibImpl;
+import com.nataliia.dao.impl.UserDaoHibImpl;
 import com.nataliia.model.User;
 import com.nataliia.utils.HashUtil;
 import org.apache.log4j.Logger;
@@ -29,7 +29,7 @@ public class RegistrationServlet extends HttpServlet {
         String urlToRedirect;
         String message;
         LOGGER.debug("Start of new registration");
-        if (userDao.findUserByName(name) != null) {
+        if ((userDao.getUserByName(name)).get() != null) {
             urlToRedirect = "/index.jsp";
             message = "Вы успешно зарегистрировались. Войдите в систему.";
             LOGGER.debug("Successful registration of " + name);

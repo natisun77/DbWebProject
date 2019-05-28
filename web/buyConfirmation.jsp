@@ -15,7 +15,7 @@
 <center>
     <h2>Введите одноразовый код</h2>
 <form action="/buy" method="post">
-    <input hidden type="text" name="goodId" value="<c:out value="${goodId}"/>">
+    <input hidden type="text" name="goodsOrder" value="<c:out value="${goodsOrder}"/>">
     <input type="password" title="Код" name="code" />
     <input type="submit"/>
 </form>

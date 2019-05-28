@@ -1,7 +1,5 @@
 package com.nataliia.model;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "confirmation_code")
@@ -26,8 +23,8 @@ public class Code {
     @Column(name = "user_Id")
     private Long userId;
 
-    @Column(name = "good_Id")
-    private Long goodId;
+    @Column(name = "goods_order", length = 10000)
+    private String goodsOrder;
 
     @Column(name = "creation_date")
     private LocalDateTime localDateTime;
@@ -35,10 +32,10 @@ public class Code {
     public Code() {
     }
 
-    public Code(String value, Long userId, Long goodId) {
+    public Code(String value, Long userId, String goodsOrder) {
         this.value = value;
         this.userId = userId;
-        this.goodId = goodId;
+        this.goodsOrder = goodsOrder;
         localDateTime = LocalDateTime.now();
     }
 
@@ -58,12 +55,12 @@ public class Code {
         this.userId = userId;
     }
 
-    public Long getGoodId() {
-        return goodId;
+    public String getGoodsOrder() {
+        return goodsOrder;
     }
 
-    public void setGoodId(Long goodId) {
-        this.goodId = goodId;
+    public void setGoodsOrder(String goodsOrder) {
+        this.goodsOrder = goodsOrder;
     }
 
     public LocalDateTime getLocalDateTime() {
@@ -84,14 +81,14 @@ public class Code {
 
         if (value != code.value) return false;
         if (userId != null ? !userId.equals(code.userId) : code.userId != null) return false;
-        return goodId != null ? goodId.equals(code.goodId) : code.goodId == null;
+        return goodsOrder != null ? goodsOrder.equals(code.goodsOrder) : code.goodsOrder == null;
     }
 
     @Override
     public int hashCode() {
         int result = value != null ? value.hashCode() : 0;
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (goodId != null ? goodId.hashCode() : 0);
+        result = 31 * result + (goodsOrder != null ? goodsOrder.hashCode() : 0);
         return result;
     }
 }

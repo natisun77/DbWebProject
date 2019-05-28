@@ -1,6 +1,6 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.GoodDaoHibImpl;
+import com.nataliia.dao.impl.GoodDaoHibImpl;
 import com.nataliia.exceptions.GoodNotFoundException;
 import com.nataliia.model.Good;
 import org.apache.log4j.Logger;
@@ -16,12 +16,12 @@ import java.io.IOException;
 
 @WebServlet(value = "/good")
 public class GoodServlet extends HttpServlet {
-    private GoodDaoHibImpl goodDaoHib = new GoodDaoHibImpl();
+    private GoodDaoHibImpl goodDao = new GoodDaoHibImpl();
     private static final Logger LOGGER = Logger.getLogger(GoodServlet.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         long goodId = getGoodIdFromRequest(request);
-        Good good = goodDaoHib.findGoodById(goodId);
+        Good good = goodDao.getById(Good.class, goodId);
         request.setAttribute("good", good);
 
         HttpSession session = request.getSession();
@@ -43,7 +43,7 @@ public class GoodServlet extends HttpServlet {
             double price = Double.parseDouble(request.getParameter("price"));
 
             LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " adds new good" + name + ".");
-            goodDaoHib.addGood(new Good(name, description, price));
+            goodDao.add(new Good(name, description, price));
             response.sendRedirect("/adminGoods");
         }
     }
@@ -54,7 +54,7 @@ public class GoodServlet extends HttpServlet {
         String description = req.getParameter("description");
         double price = Double.parseDouble(req.getParameter("price"));
         long goodId = getGoodIdFromRequest(req);
-        goodDaoHib.updateGood(new Good(getGoodIdFromRequest(req), name, description, price));
+        goodDao.update(new Good(getGoodIdFromRequest(req), name, description, price));
 
         HttpSession session = req.getSession();
         LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " updates good with " + goodId + ".");
@@ -64,7 +64,7 @@ public class GoodServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long goodId = getGoodIdFromRequest(req);
-        goodDaoHib.deleteGoodById(goodId);
+        goodDao.deleteById(Good.class, goodId);
 
         HttpSession session = req.getSession();
         LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " deletes good with " + goodId + ".");

@@ -1,7 +1,9 @@
 package com.nataliia.servlet;
 
-import com.nataliia.dao.CodeDaoHibImpl;
+import com.nataliia.dao.CodeDao;
+import com.nataliia.dao.impl.CodeDaoHibImpl;
 import com.nataliia.model.Code;
+import com.nataliia.model.Good;
 import com.nataliia.model.User;
 import com.nataliia.service.MailService;
 
@@ -11,22 +13,26 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(value = "/buy")
 public class BuyGoodServlet extends HttpServlet {
 
     private static final MailService MAIL_SERVICE = new MailService();
-    private static final CodeDaoHibImpl CODE_DAO_HIB = new CodeDaoHibImpl();
+    private static final CodeDao codeDao = new CodeDaoHibImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Long userId = (Long) request.getSession().getAttribute("userId");
+        HttpSession session = request.getSession();
+        Long userId = (Long) session.getAttribute("userId");
 
         if (userId != null) {
-            Long goodId = Long.valueOf(request.getParameter("goodId"));
             String code = request.getParameter("code");
 
-            if (CODE_DAO_HIB.isValidCode(code, userId, goodId)) {
+            if (codeDao.isValidCode(code, userId)) {
+                session.setAttribute("cart", new ArrayList<Good>());
                 response.getWriter().print("Оплата прошла");
             } else {
                 response.getWriter().print("Оплата отменена");
@@ -40,14 +46,13 @@ public class BuyGoodServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Long goodId = Long.parseLong(request.getParameter("id"));
+        List<Good> cart = (List<Good>) request.getSession().getAttribute("cart");
+        String order = cart.toString();
 
         User user = (User) request.getSession().getAttribute("user");
         String randomCode = MAIL_SERVICE.sendMailWithCode(user.getEmail());
-        Code code = new Code(randomCode, user.getId(), goodId);
-        CODE_DAO_HIB.addCode(code);
-        request.setAttribute("goodId", goodId);
-
+        Code code = new Code(randomCode, user.getId(), order);
+        codeDao.add(code);
         request.getRequestDispatcher("buyConfirmation.jsp").forward(request, response);
     }
 }

@@ -13,28 +13,65 @@
 </head>
 <body>
 
+<c:set var="message" value='${requestScope["message"]}'/>
+<c:if test="${not empty message}"><p>${message}</p></c:if>
+
 <table>
     <tr>
-        <td>ID</td>
-        <td>Название товара</td>
-        <td>Описание</td>
-        <td>Цена</td>
-        <td>Купить!</td>
+        <table>
+            <tr>
+                <td>ID</td>
+                <td>Название товара</td>
+                <td>Описание</td>
+                <td>Цена</td>
+                <td>Покупка</td>
+            </tr>
+
+            <c:forEach items="${goods}" var="good">
+                <tr>
+                    <td><c:out value="${good.id}"/></td>
+
+                    <td><c:out value="${good.name}"/></td>
+
+                    <td><c:out value="${good.description}"/></td>
+
+                    <td><c:out value="${good.price}"/></td>
+
+
+                    <td>
+                        <form action="${pageContext.request.contextPath}/chooseGood" method="post">
+                            <input type="hidden" name="id" value="${good.id}"/>
+                            <input type="submit" value="В корзину"/>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
+
+        </table>
     </tr>
+    <tr>
+        <table>
+            <tr>
+                <td>ID</td>
+                <td>Название товара</td>
+                <td>Цена</td>
+            </tr>
 
-    <c:forEach items="${goods}" var="good">
-        <tr>
-            <td><c:out value="${good.id}"/></td>
+            <c:forEach items="${cart}" var="good">
+                <tr>
+                    <td><c:out value="${good.id}"/></td>
 
-            <td><c:out value="${good.name}"/></td>
+                    <td><c:out value="${good.name}"/></td>
 
-            <td><c:out value="${good.description}"/></td>
+                    <td><c:out value="${good.price}"/></td>
+                </tr>
+            </c:forEach>
 
-            <td><c:out value="${good.price}"/></td>
-
-            <td><a href='buy?id=${good.id}'>Купить!</a></td>
-        </tr>
-    </c:forEach>
+        </table>
+        <form action="${pageContext.request.contextPath}/buy" method="get">
+            <input type="submit" value="Купить"/>
+        </form>
+    </tr>
 </table>
 
 </body>
