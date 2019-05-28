@@ -20,7 +20,7 @@
         <td>Цена</td>
     </tr>
 
-    <c:forEach items="${goods}" var="good">
+    <c:forEach items="${cart}" var="good">
         <tr>
             <td><c:out value="${good.id}"/></td>
             <td><c:out value="${good.name}"/></td>

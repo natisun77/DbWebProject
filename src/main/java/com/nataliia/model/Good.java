@@ -2,10 +2,13 @@ package com.nataliia.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "goods")
@@ -23,6 +26,9 @@ public class Good {
 
     @Column (name = "price")
     private double price;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "cart")
+    private List<Order> orders;
 
     public Good(){
     }
@@ -72,6 +78,14 @@ public class Good {
         this.price = price;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -82,7 +96,8 @@ public class Good {
         if (id != good.id) return false;
         if (Double.compare(good.price, price) != 0) return false;
         if (name != null ? !name.equals(good.name) : good.name != null) return false;
-        return description != null ? description.equals(good.description) : good.description == null;
+        if (description != null ? !description.equals(good.description) : good.description != null) return false;
+        return orders != null ? orders.equals(good.orders) : good.orders == null;
     }
 
     @Override
@@ -94,6 +109,7 @@ public class Good {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         temp = Double.doubleToLongBits(price);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (orders != null ? orders.hashCode() : 0);
         return result;
     }
 

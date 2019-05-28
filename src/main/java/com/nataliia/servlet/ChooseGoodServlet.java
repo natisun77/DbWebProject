@@ -1,8 +1,14 @@
 package com.nataliia.servlet;
 
 import com.nataliia.dao.GoodDao;
+import com.nataliia.dao.OrderDao;
+import com.nataliia.dao.UserDao;
 import com.nataliia.dao.impl.GoodDaoHibImpl;
+import com.nataliia.dao.impl.OrderDaoHibImpl;
+import com.nataliia.dao.impl.UserDaoHibImpl;
 import com.nataliia.model.Good;
+import com.nataliia.model.Order;
+import com.nataliia.model.User;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -18,33 +24,39 @@ import java.util.List;
 
 @WebServlet(value = "/chooseGood")
 public class ChooseGoodServlet extends HttpServlet {
-    private static final Logger LOGGER = Logger.getLogger(ChooseGoodServlet.class);
-    private static final GoodDao goodDaoHib = new GoodDaoHibImpl();
+    private static final Logger logger = Logger.getLogger(ChooseGoodServlet.class);
+    private static final UserDao userDao = new UserDaoHibImpl();
+    private static final GoodDao goodDao = new GoodDaoHibImpl();
+    private static final OrderDao orderDao = new OrderDaoHibImpl();
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         Long userId = (Long) session.getAttribute("userId");
+        User userFromDb = userDao.getById(User.class, userId);
         String urlToRedirect;
 
-        if (userId != null) {
+        if (userFromDb != null) {
             Long goodId = Long.parseLong(request.getParameter("id"));
-            Good goodFromDB = goodDaoHib.getById(Good.class, goodId);
-            List<Good> cart = (List<Good>) session.getAttribute("cart");
-            if (cart == null) {
-                cart = new ArrayList<>();
-                session.setAttribute("cart", cart);
+            Good goodFromDB = goodDao.getById(Good.class, goodId);
+            Order currentOrder = userFromDb.getOrder();
+            if (currentOrder == null) {
+                Order order = new Order(new ArrayList<>(List.of(goodFromDB)),userFromDb);
+                orderDao.add(order);
+            } else{
+                currentOrder.getCart().add(goodFromDB);
+                orderDao.update(userFromDb.getOrder());
             }
-            cart.add(goodFromDB);
-
+            List<Good> cart = currentOrder.getCart();
             request.setAttribute("cart", cart);
-            request.setAttribute("message", "Товар " + goodFromDB.getName() + " был добавлен в корзину.");
-            List<Good> goods = goodDaoHib.getAll(Good.class);
-            LOGGER.debug("Loading list of goods" + goods);
+            request.setAttribute("message", "Товар " + goodFromDB.getName() + " был добавлен в заказ.");
+            List<Good> goods = goodDao.getAll(Good.class);
+            logger.debug("Loading list of goods" + goods);
             request.setAttribute("goods", goods);
             urlToRedirect = "/allGoodsPage.jsp";
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlToRedirect);
             dispatcher.forward(request, response);
+            session.setAttribute("cart", cart);
         } else {
             request.setAttribute("message", "Ошибка. Войдите в систему.");
             urlToRedirect = "/index.jsp";

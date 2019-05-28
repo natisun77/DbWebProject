@@ -28,19 +28,20 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T> {
 
     @Override
     public T getById(Class<T> entityClazz, final long id) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        T object = session.get(entityClazz, id);
         logger.debug("Object of" + entityClazz + " with id " + id + " was found.");
-        return HibernateSessionFactoryUtil.getSessionFactory()
-                .openSession()
-                .get(entityClazz, id);
+        session.close();
+        return object;
     }
 
     @Override
     public List<T> getAll(Class<T> entityClass) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        List<T> objects = session.createCriteria(entityClass).list();
+        session.close();
         logger.debug("Objects of " + entityClass + "were found.");
-        return HibernateSessionFactoryUtil.getSessionFactory().
-                openSession().
-                createCriteria(entityClass).
-                list();
+        return objects;
     }
 
     @Override

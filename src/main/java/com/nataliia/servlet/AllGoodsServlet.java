@@ -15,18 +15,18 @@ import java.util.List;
 
 @WebServlet(value = "/goods")
 public class AllGoodsServlet extends HttpServlet {
-    private static final Logger LOGGER = Logger.getLogger(AdminServlet.class);
-    private static final GoodDao GOOD_DAO_HIB = new GoodDaoHibImpl();
+    private static final Logger logger = Logger.getLogger(AdminServlet.class);
+    private static final GoodDao goodDao = new GoodDaoHibImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request,response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Good> goods = GOOD_DAO_HIB.getAll(Good.class);
-        LOGGER.debug("Loading list of goods" + goods);
+        List<Good> goods = goodDao.getAll(Good.class);
+        logger.debug("Loading list of goods" + goods);
         request.setAttribute("goods", goods);
-        LOGGER.debug("Loading list of goods" + goods);
+        logger.debug("Loading list of goods" + goods);
         request.getRequestDispatcher("allGoodsPage.jsp").forward(request,response);
     }
 }

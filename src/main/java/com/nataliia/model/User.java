@@ -37,6 +37,9 @@ public class User {
     @Column(name = "salt")
     private String salt;
 
+    @OneToOne(mappedBy = "user")
+    private Order order;
+
     public User() {
     }
 
@@ -124,6 +127,14 @@ public class User {
         this.role = role;
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -131,18 +142,24 @@ public class User {
 
         User user = (User) o;
 
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
         if (name != null ? !name.equals(user.name) : user.name != null) return false;
         if (email != null ? !email.equals(user.email) : user.email != null) return false;
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
-        return role != null ? role.equals(user.role) : user.role == null;
+        if (role != null ? !role.equals(user.role) : user.role != null) return false;
+        if (salt != null ? !salt.equals(user.salt) : user.salt != null) return false;
+        return order != null ? order.equals(user.order) : user.order == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (role != null ? role.hashCode() : 0);
+        result = 31 * result + (salt != null ? salt.hashCode() : 0);
+        result = 31 * result + (order != null ? order.hashCode() : 0);
         return result;
     }
 
@@ -153,7 +170,8 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", role=" + role +
+                ", salt='" + salt + '\'' +
                 '}';
     }
 }

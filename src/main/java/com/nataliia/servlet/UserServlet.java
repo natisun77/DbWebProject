@@ -18,7 +18,7 @@ import java.io.IOException;
 @WebServlet(value = "/user")
 public class UserServlet extends HttpServlet {
     private UserDaoHibImpl userDao = new UserDaoHibImpl();
-    private static final Logger LOGGER = Logger.getLogger(AdminServlet.class);
+    private static final Logger logger = Logger.getLogger(AdminServlet.class);
 
     public void setUserDao(UserDaoHibImpl userDao) {
         this.userDao = userDao;
@@ -28,11 +28,11 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = getUserByIdFromRequest(req);
         User user = userDao.getById(User.class, id);
-        LOGGER.debug(user.getName() + " asked for user information using ID " + "as" + user.getRole());
+        logger.debug(user.getName() + " asked for user information using ID " + "as" + user.getRole());
         req.setAttribute("user", user);
 
         HttpSession session = req.getSession();
-        LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " edits user");
+        logger.debug("Admin with ID=" + session.getAttribute("userId") + " edits user");
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/editUser.jsp");
         dispatcher.forward(req, resp);
     }
@@ -50,7 +50,7 @@ public class UserServlet extends HttpServlet {
             String email = req.getParameter("email");
             String password = req.getParameter("password");
 
-            LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " adds new good" + name + ".");
+            logger.debug("Admin with ID=" + session.getAttribute("userId") + " adds new good" + name + ".");
             User user = new User(name, email, password, new Role("member"));
             userDao.add(user);
             resp.sendRedirect("/adminPage");
@@ -62,7 +62,7 @@ public class UserServlet extends HttpServlet {
         Long id = getUserByIdFromRequest(req);
         userDao.deleteById(User.class, id);
         HttpSession session = req.getSession();
-        LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " deletes user.");
+        logger.debug("Admin with ID=" + session.getAttribute("userId") + " deletes user.");
         resp.sendRedirect("/adminPage");
     }
 
@@ -76,7 +76,7 @@ public class UserServlet extends HttpServlet {
         userDao.update(new User(id, name, email, password, new Role(role)));
 
         HttpSession session = req.getSession();
-        LOGGER.debug("Admin with ID=" + session.getAttribute("userId") + " updates user with " + id + ".");
+        logger.debug("Admin with ID=" + session.getAttribute("userId") + " updates user with " + id + ".");
         resp.sendRedirect("/adminPage");
     }
 

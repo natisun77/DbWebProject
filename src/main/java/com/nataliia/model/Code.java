@@ -23,7 +23,7 @@ public class Code {
     @Column(name = "user_Id")
     private Long userId;
 
-    @Column(name = "goods_order")
+    @Column(name = "goods_order", length = 10000)
     private String goodsOrder;
 
     @Column(name = "creation_date")

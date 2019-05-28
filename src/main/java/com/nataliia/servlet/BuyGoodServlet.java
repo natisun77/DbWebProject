@@ -53,8 +53,6 @@ public class BuyGoodServlet extends HttpServlet {
         String randomCode = MAIL_SERVICE.sendMailWithCode(user.getEmail());
         Code code = new Code(randomCode, user.getId(), order);
         codeDao.add(code);
-        request.setAttribute("order", order);
-
         request.getRequestDispatcher("buyConfirmation.jsp").forward(request, response);
     }
 }

@@ -2,6 +2,7 @@ package com.nataliia.utils;
 
 import com.nataliia.model.Code;
 import com.nataliia.model.Good;
+import com.nataliia.model.Order;
 import com.nataliia.model.Role;
 import com.nataliia.model.User;
 import org.apache.log4j.Logger;
@@ -24,6 +25,7 @@ public class HibernateSessionFactoryUtil {
                 configuration.addAnnotatedClass(User.class);
                 configuration.addAnnotatedClass(Good.class);
                 configuration.addAnnotatedClass(Code.class);
+                configuration.addAnnotatedClass(Order.class);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
 
